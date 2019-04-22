@@ -315,6 +315,21 @@ Pesuo <- function(x,gene = x@var.genes){
   HNSC_Ps <- orderCells(HNSC_Ps)
   return(HNSC_Ps)}
 ## 8a03a29901b31176e32928321b1349e6
+canFil<-function(x,save = F){
+  if(sum(duplicated(substr(colnames(x),1,12)))>0)
+  {x<-x[,colnames(x) %in% sort(colnames(x))[!duplicated(substr(sort(colnames(x)),1,12))]]}
+  Can<-x[,which(substr(colnames(x),14,14)=="0")]
+  Nor<-x[,which(substr(colnames(x),14,14)=="1")]
+  colnames(Can) <- gsub("\\.","-",substr(toupper(colnames(Can)),1,12))
+  if(save){
+    print("Please input the name you want to save. Such as LGG_FPKMUQ_mRNA")
+    name<-scan(what = "character")
+    write.csv(Can,paste(name,"Can.csv",sep = "_"))
+    write.csv(Nor,paste(name,"Nor.csv",sep = "_"))}
+  rm(Nor)
+  gc()
+  return(Can)}
+## 8a03a29901b31176e32928321b1349e6                       
 DESeq2<-function(countMatrix, pData){
   dds<-DESeqDataSetFromMatrix(countData = countMatrix, colData = pData, design = ~ phenotype)
   dds<-DESeq(dds)
