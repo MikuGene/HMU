@@ -378,4 +378,4 @@ DErun<-function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = F){
   return(aa)}
 cat(" ","DESeq2 --- done.","\n",file = stderr())                       
 ## 8a03a29901b31176e32928321b1349e6                       
-cat(" ","Ready up.","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-4-22.","\n",file = stderr())
