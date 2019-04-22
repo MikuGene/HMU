@@ -1,5 +1,5 @@
 ## 8a03a29901b31176e32928321b1349e6
-cat("Gift for HMU wei group. -- Lianhao Song","\n")
+cat("Gift for HMU wei group. -- Lianhao Song. If any questions, please wechat 18746004617.","\n")
 library(plyr)
 library(Matrix)
 ## 8a03a29901b31176e32928321b1349e6
