@@ -312,4 +312,51 @@ Pesuo <- function(x,gene = x@var.genes){
   HNSC_Ps <- orderCells(HNSC_Ps)
   return(HNSC_Ps)}
 ## 8a03a29901b31176e32928321b1349e6
+DESeq2<-function(countMatrix, pData){
+  dds<-DESeqDataSetFromMatrix(countData = countMatrix, colData = pData, design = ~ phenotype)
+  dds<-DESeq(dds)
+  dds<-replaceOutliersWithTrimmedMean(dds)
+  res<-results(dds, cooksCutoff=FALSE)
+  rm(dds)
+  res<-res[order(res$padj),]
+  return(res)}
+## 8a03a29901b31176e32928321b1349e6
+DErun<-function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = F){
+  library(DESeq2)
+  if(run){
+    positive_ReadCount<-x
+    negative_ReadCount<-y
+    colnames(negative_ReadCount)<-paste("N",colnames(negative_ReadCount),sep="-")
+    colnames(positive_ReadCount)<-paste("P",colnames(positive_ReadCount),sep="-")
+    ReadCount<-cbind(negative_ReadCount,positive_ReadCount)
+    ReadCount<-round(ReadCount)
+    feature<-c(rep("Neg",ncol(negative_ReadCount)),rep("Pos",ncol(positive_ReadCount)))
+    rm(positive_ReadCount,negative_ReadCount)
+    gc()
+    pData<-data.frame(phenotype = factor(feature,levels=c("Neg", "Pos")))
+    rownames(pData)<-colnames(ReadCount)
+    diffExp<-DESeq2(ReadCount,pData)
+    if(save){
+      print("Please enter the name you want to save. Such as: LGG_FPKMUQ_lncRNA_Grade")
+      name<-scan(what = "character")
+      write.csv(diffExp,paste(name,"padj.csv",sep = "_"))
+      rm(name)}
+    DEgene<-as.data.frame(diffExp)
+    DEname<-rownames(DEgene[DEgene$padj<=pvalue & abs(DEgene$log2FoldChange)>=log2FC,])
+    print(sort(DEname))
+    rm(diffExp,ReadCount,pData)
+    gc()}
+  if(!run){
+    print("Please enter the name you have saved.Such as: LGG_FPKMUQ_lncRNA")
+    named<-scan(what = "character")
+    DEgene<-read.csv(paste(named,"padj.csv",sep = "_"),header = T,row.names = 1)
+    DEname<-rownames(DEgene[DEgene$padj<pvalue & abs(DEgene$log2FoldChange)>log2FC,])
+    print(sort(DEname))
+    rm(named)
+    gc()}
+  aa<-list(DEgene,DEname)
+  rm(DEgene,DEname)
+  gc()
+  return(aa)}
+## 8a03a29901b31176e32928321b1349e6                       
 cat(" ","Ready up.","\n",file = stderr())
