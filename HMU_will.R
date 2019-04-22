@@ -1,5 +1,5 @@
 ## 8a03a29901b31176e32928321b1349e6
-cat("Gift for HMU wei group. -- Lianhao Song")
+cat("Gift for HMU wei group. -- Lianhao Song","\n")
 library(plyr)
 library(Matrix)
 ## 8a03a29901b31176e32928321b1349e6
@@ -84,6 +84,7 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),Data_name = "temp",Res
     rm(mito_genes,precent_mito,nGene_R,mito_R,PC_M,PBMC)
     gc()
     return(Plot_F)}}
+cat(" ","scRNA_anlysis --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
 Enrich <- function(x,dir = NULL,IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Kegg = T,Keggmap = T,save = T,Gomap = T,wid = 8, h = 8){
   library(clusterProfiler)
@@ -146,6 +147,7 @@ Enrich <- function(x,dir = NULL,IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Kegg 
   gc()
   setwd(path)
   return(aa)}
+cat(" ","Enrich --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
 remRow <- function(x,Rem=0.1,raito = T){
   x[nrow(x)+1,] <- 0
@@ -158,7 +160,7 @@ remRow <- function(x,Rem=0.1,raito = T){
   Frame <- x[-remove,]
   rm(remove)
   gc()
-  return(Frame)}
+  return(Frame)}                       
 ## 8a03a29901b31176e32928321b1349e6
 WGCNA_TOMmap<-function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 30,Map = F,custom = F){
   library(WGCNA)
@@ -303,6 +305,7 @@ WGCNA_Detail<-function(x,y,Cliorder=NULL,Trait=NULL,Color=NULL,name = "temp",Map
     setwd(Oripath)
     rm(Oripath)
     return(nodeGenes)}}
+cat(" ","WGNCA --- done.","\n",file = stderr())                       
 ## 8a03a29901b31176e32928321b1349e6
 Pesuo <- function(x,gene = x@var.genes){
   HNSC_Ps <- newCellDataSet(as.matrix(x@data))
@@ -358,5 +361,6 @@ DErun<-function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = F){
   rm(DEgene,DEname)
   gc()
   return(aa)}
+cat(" ","DESeq2 --- done.","\n",file = stderr())                       
 ## 8a03a29901b31176e32928321b1349e6                       
 cat(" ","Ready up.","\n",file = stderr())
