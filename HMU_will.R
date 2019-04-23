@@ -446,6 +446,84 @@ CorTest <- function(x,y,method = "pearson",p_cut = 0.01,adj = T,row = T,name = "
   Corlist$State[as.numeric(Corlist$Cor) > 0] <- "pos"
   Corlist$State[as.numeric(Corlist$Cor) < 0] <- "neg"
   return(Corlist)}}
-cat(" ","Test --- done.","\n",file = stderr())                       
-## 8a03a29901b31176e32928321b1349e6                       
+cat(" ","Test --- done.","\n",file = stderr()) 
+## 8a03a29901b31176e32928321b1349e6
+scRNA_3 <- function(x,ori = F,nGene_R = c(200,Inf),mito_R = c(-Inf,40),pmax = 15,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F){
+  library(Seurat)
+  if(ori){HNSC <- Read10X(x)
+  cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
+  cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
+  if(detail){
+    HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
+    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT-")
+    print(VlnPlot(HNSC, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))
+    print(CombinePlots(list(FeatureScatter(HNSC,"nCount_RNA","percent.mt"),FeatureScatter(HNSC,"nCount_RNA","nFeature_RNA"))))
+    cat(" ","Now let us cut: \n",file = stderr())
+    cat(" ","Please input the low & high thresholds for nFeature. If none, input '-Inf' . Such as 200;Inf \n",file = stderr())
+    nGene_R <- scan(sep = ";")
+    cat(" ","Please input the low & high thresholds for mito. If none, input '-Inf' . Such as -Inf;40 \n",file = stderr())
+    mito_R <- scan(sep = ";")
+    dev.off()
+    HNSC <- subset(HNSC,nFeature_RNA >= nGene_R[1] & nFeature_RNA <= nGene_R[2] & percent.mt >= mito_R[1] & percent.mt <= mito_R[2])
+    HNSC <- NormalizeData(HNSC)
+    HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 2000)
+    print(LabelPoints(VariableFeaturePlot(HNSC), points = head(VariableFeatures(HNSC), 10), repel = T))
+    HNSC <- ScaleData(HNSC, features = rownames(HNSC))
+    HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = T,ndims.print = 1:3)
+    print(VizDimLoadings(HNSC, dims = 1:(pmax-6), reduction = "pca"))
+    cat(" ","Are you ready ? If ok, input 1",file = stderr())
+    tem <- scan(what = "character")
+    if(!is.null(tem)){cat("well done.\n",file = stderr())}
+    rm(tem)
+    DimHeatmap(HNSC, dims = 1:pmax, cells = 500, balanced = TRUE)
+    cat(" ","Please save your figure. If ok, input 1",file = stderr())
+    tem <- scan(what = "character")
+    if(!is.null(tem)){cat("well done.\n",file = stderr())}
+    rm(tem)
+    gc()
+    HNSC <- JackStraw(HNSC, num.replicate = 100)
+    HNSC <- ScoreJackStraw(HNSC, dims = 1:(pmax+5))
+    print(CombinePlots(list(JackStrawPlot(HNSC, dims = 1:pmax, xmax = 0.1, ymax = 0.5),ElbowPlot(HNSC))))
+    cat(" ","Please input the highest PC well to use.",file = stderr())
+    PCmax <- scan()
+    dev.off()
+    gc()
+    HNSC <- FindNeighbors(HNSC, dims = 1:PCmax)
+    HNSC <- FindClusters(HNSC, resolution = Reso)
+    if(UMap){
+      HNSC <- RunUMAP(HNSC, dims = 1:PCmax)
+      DimPlot(HNSC, reduction = "umap")
+      cat(" ","Please save your figure. If ok, input 1",file = stderr())
+      tem <- scan(what = "character")
+      if(!is.null(tem)){cat("well done.\n",file = stderr())}
+      rm(tem)}
+    HNSC <- RunTSNE(HNSC,dim.embed = Dim,reduction = "pca",dims.use = 1:PCmax)
+    print(DimPlot(HNSC,dims = c(1,2),label = T,reduction = "tsne"))
+    cat(" ","Please save your figure. If ok, input 1",file = stderr())
+    tem <- scan(what = "character")
+    if(!is.null(tem)){cat("well done.\n",file = stderr())}
+    rm(tem)
+    dir.create("backup")
+    saveRDS(HNSC,paste0("backup/",name,".rds"))
+    gc()
+    cat(" ","Please confirm your cluster in other R. \n",file = stderr())
+    return(HNSC)}
+  else{
+    dev.off()
+    HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
+    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT-")
+    HNSC <- subset(HNSC,nFeature_RNA >= nGene_R[1] & nFeature_RNA <= nGene_R[2] & percent.mt >= mito_R[1] & percent.mt <= mito_R[2])
+    HNSC <- NormalizeData(HNSC,verbose = F)
+    HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 2000,verbose = F)
+    HNSC <- ScaleData(HNSC, features = rownames(HNSC),verbose = F)
+    HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = F)
+    HNSC <- FindNeighbors(HNSC, dims = 1:PCmax,verbose = F)
+    HNSC <- FindClusters(HNSC, resolution = Reso,verbose = F)
+    HNSC <- RunTSNE(HNSC,dim.embed = Dim,reduction = "pca",dims.use = 1:PCmax)
+    Plot <- DimPlot(HNSC,label = T,reduction = "tsne",pt.size = 1)
+    rm(HNSC)
+    gc()
+    return(Plot)}}                       
+## 8a03a29901b31176e32928321b1349e6
+cat(" ","scRNA_3 --- done.","\n",file = stderr())                    
 cat(" ","Ready up. Latest update: 2019-4-22. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
