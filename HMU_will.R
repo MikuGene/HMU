@@ -448,7 +448,7 @@ CorTest <- function(x,y,method = "pearson",p_cut = 0.01,adj = T,row = T,name = "
   return(Corlist)}}
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,ori = F,nGene_R = c(200,Inf),mito_R = c(-Inf,40),pmax = 15,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F){
+scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 15,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F){
   library(Seurat)
   if(ori){HNSC <- Read10X(x)
   cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
@@ -460,11 +460,11 @@ scRNA_3 <- function(x,ori = F,nGene_R = c(200,Inf),mito_R = c(-Inf,40),pmax = 15
     print(CombinePlots(list(FeatureScatter(HNSC,"nCount_RNA","percent.mt"),FeatureScatter(HNSC,"nCount_RNA","nFeature_RNA"))))
     cat(" ","Now let us cut: \n",file = stderr())
     cat(" ","Please input the low & high thresholds for nFeature. If none, input '-Inf' . Such as 200;Inf \n",file = stderr())
-    nGene_R <- scan(sep = ";")
+    nGene <- scan(sep = ";")
     cat(" ","Please input the low & high thresholds for mito. If none, input '-Inf' . Such as -Inf;40 \n",file = stderr())
-    mito_R <- scan(sep = ";")
+    mito <- scan(sep = ";")
     dev.off()
-    HNSC <- subset(HNSC,nFeature_RNA >= nGene_R[1] & nFeature_RNA <= nGene_R[2] & percent.mt >= mito_R[1] & percent.mt <= mito_R[2])
+    HNSC <- subset(HNSC,nFeature_RNA >= nGene[1] & nFeature_RNA <= nGene[2] & percent.mt >= mito[1] & percent.mt <= mito[2])
     HNSC <- NormalizeData(HNSC)
     HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 2000)
     print(LabelPoints(VariableFeaturePlot(HNSC), points = head(VariableFeatures(HNSC), 10), repel = T))
