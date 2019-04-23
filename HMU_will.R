@@ -162,7 +162,7 @@ remRow <- function(x,Rem=0.1,raito = T){
   gc()
   return(Frame)}                       
 ## 8a03a29901b31176e32928321b1349e6
-WGCNA_TOMmap<-function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 30,Map = F,custom = F){
+WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 30,Map = F,custom = F){
   library(WGCNA)
   enableWGCNAThreads(nThreads = nCPU)
   if(!custom){
@@ -243,7 +243,7 @@ WGCNA_TOMmap<-function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 30
   gc()
   return(aa)}
 ## 8a03a29901b31176e32928321b1349e6
-WGCNA_Detail<-function(x,y,Cliorder=NULL,Trait=NULL,Color=NULL,name = "temp",Mapcolor=Color,MMCutgene=0.20,GSCutgene=0.20,coefficient = 0.02,Cys = T,OnlyCys = F){
+WGCNA_Detail <- function(x,y,Cliorder=NULL,Trait=NULL,Color=NULL,name = "temp",Mapcolor=Color,MMCutgene=0.20,GSCutgene=0.20,coefficient = 0.02,Cys = T,OnlyCys = F){
   Oripath <- getwd()
   dir.create(name)
   setwd(name)
@@ -316,7 +316,7 @@ Pesuo <- function(x,gene = x@var.genes){
   HNSC_Ps <- orderCells(HNSC_Ps)
   return(HNSC_Ps)}
 ## 8a03a29901b31176e32928321b1349e6
-canFil<-function(x,save = F){
+canFil <- function(x,save = F){
   if(sum(duplicated(substr(colnames(x),1,12)))>0)
   {x<-x[,colnames(x) %in% sort(colnames(x))[!duplicated(substr(sort(colnames(x)),1,12))]]}
   Can<-x[,which(substr(colnames(x),14,14)=="0")]
@@ -331,7 +331,7 @@ canFil<-function(x,save = F){
   gc()
   return(Can)}
 ## 8a03a29901b31176e32928321b1349e6                       
-DESeq2<-function(countMatrix, pData){
+DESeq2 <- function(countMatrix, pData){
   dds<-DESeqDataSetFromMatrix(countData = countMatrix, colData = pData, design = ~ phenotype)
   dds<-DESeq(dds)
   dds<-replaceOutliersWithTrimmedMean(dds)
@@ -340,7 +340,7 @@ DESeq2<-function(countMatrix, pData){
   res<-res[order(res$padj),]
   return(res)}
 ## 8a03a29901b31176e32928321b1349e6
-DErun<-function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = F){
+DErun <- function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = F){
   library(DESeq2)
   if(run){
     positive_ReadCount<-x
@@ -526,4 +526,4 @@ scRNA_3 <- function(x,ori = F,nGene_R = c(200,Inf),mito_R = c(-Inf,40),pmax = 15
     return(Plot)}}                       
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","scRNA_3 --- done.","\n",file = stderr())                    
-cat(" ","Ready up. Latest update: 2019-4-22. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-4-23. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
