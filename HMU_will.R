@@ -308,6 +308,7 @@ WGCNA_Detail<-function(x,y,Cliorder=NULL,Trait=NULL,Color=NULL,name = "temp",Map
 cat(" ","WGNCA --- done.","\n",file = stderr())                       
 ## 8a03a29901b31176e32928321b1349e6
 Pesuo <- function(x,gene = x@var.genes){
+  library(monocle)
   HNSC_Ps <- newCellDataSet(as.matrix(x@data))
   HNSC_Ps <- estimateSizeFactors(HNSC_Ps)
   HNSC_Ps <- setOrderingFilter(HNSC_Ps,gene)
