@@ -523,5 +523,25 @@ scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 15,PCm
     gc()
     return(Plot)}}                       
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","scRNA_3 --- done.","\n",file = stderr())                    
-cat(" ","Ready up. Latest update: 2019-4-23. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","scRNA_3 --- done.","\n",file = stderr())
+## 8a03a29901b31176e32928321b1349e6
+Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
+  Data <- cbind(x,y)
+  Group <- data.frame(row.names = colnames(Data), Group1 = c(rep(1,ncol(x)),rep(0,ncol(y))), Group2 = c(rep(0,ncol(x)),rep(1,ncol(y))))
+  library(limma)
+  Sig <- makeContrasts("Group1-Group2", levels = Group)
+  fit <- eBayes(contrasts.fit(lmFit(Data,Group),Sig))
+  output <- na.omit(topTable(fit,number = nrow(Data),coef = 1,adjust = "BH"))
+  rm(Data,Group,Sig,fit)
+  gc()
+  if(filt)
+  {output <- subset(output, adj.P.Val <= padj & abs(logFC) >= log2FC & P.Value <= pval)}
+  output$Sig <- "NO"
+  output$Sig[output$P.Value < 0.05] <- "Yes"
+  output$State <- "None"
+  output$State[output$logFC > 0] <- "Up"
+  output$State[output$logFC < 0] <- "Down"
+  return(output)}
+cat(" ","Lima --- done.","\n",file = stderr())
+## 8a03a29901b31176e32928321b1349e6
+cat(" ","Ready up. Latest update: 2019-05-06. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
