@@ -456,7 +456,7 @@ scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 15,PCm
   cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
   if(detail){
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
-    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT-")
+    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT.")
     print(VlnPlot(HNSC, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))
     print(CombinePlots(list(FeatureScatter(HNSC,"nCount_RNA","percent.mt"),FeatureScatter(HNSC,"nCount_RNA","nFeature_RNA"))))
     cat(" ","Now let us cut: \n",file = stderr())
@@ -509,7 +509,7 @@ scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 15,PCm
   else{
     dev.off()
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
-    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT-")
+    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT.")
     HNSC <- subset(HNSC,nFeature_RNA >= nGene_R[1] & nFeature_RNA <= nGene_R[2] & percent.mt >= mito_R[1] & percent.mt <= mito_R[2])
     HNSC <- NormalizeData(HNSC,verbose = F)
     HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 2000,verbose = F)
