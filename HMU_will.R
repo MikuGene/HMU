@@ -10,7 +10,7 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),Data_name = "temp",Res
   if(detail){
     PBMC <- Read10X(path1)
     PBMC <- CreateSeuratObject(raw.data = PBMC,min.cells = 3,min.genes = 200,project = "PBMC")
-    mito_genes <- grep("^MT-",x = rownames(PBMC@data),value = T)
+    mito_genes <- grep("^MT.",x = rownames(PBMC@data),value = T)
     precent_mito <- colSums(PBMC@raw.data[mito_genes,])/colSums(PBMC@raw.data)
     ERCC_genes <- grep("ERCC",x = rownames(PBMC@data),value = T)
     precent_ERCC <- colSums(PBMC@raw.data[ERCC_genes,])/colSums(PBMC@raw.data)
