@@ -56,8 +56,6 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),Data_name = "temp",Res
     tem <- scan(what = "character")
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
-    tSNEplot <- PBMC@dr$tsne@cell.embeddings
-    write.csv(tSNEplot,paste0(path2,Data_name,"_backup.csv"))
     cat(" ","Please confirm your cluster in other R. \n",file = stderr())
     rm(mito_genes,precent_mito,ERCC_genes,precent_ERCC,nGene_thre,mito_thre,PCmax,tSNEplot)
     gc()
