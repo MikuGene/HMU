@@ -4,22 +4,18 @@ library(plyr)
 library(dplyr)
 library(Matrix)
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7){
+scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7){
   library(Seurat)
   cat(" ","Hello!","Now we focus on:",path1,"\n",file = stderr())
   if(detail){
     PBMC <- Read10X(path1)
     PBMC <- CreateSeuratObject(raw.data = PBMC,min.cells = 3,min.genes = 200,project = "PBMC")
-    mito_genes <- grep("^MT.",x = rownames(PBMC@data),value = T)
+    mito_genes <- grep("^MT\\.",x = rownames(PBMC@data),value = T)
     precent_mito <- colSums(PBMC@raw.data[mito_genes,])/colSums(PBMC@raw.data)
-    ERCC_genes <- grep("ERCC",x = rownames(PBMC@data),value = T)
-    precent_ERCC <- colSums(PBMC@raw.data[ERCC_genes,])/colSums(PBMC@raw.data)
     PBMC <- AddMetaData(object = PBMC, metadata = precent_mito, col.name = "percent_mito")
-    PBMC <- AddMetaData(object = PBMC, metadata = precent_ERCC, col.name = "percent_ERCC")
-    par(mfrow = c(1, 3))
+    par(mfrow = c(1, 2))
     GenePlot(object = PBMC, gene1 = "nUMI", gene2 = "percent_mito")
     GenePlot(object = PBMC, gene1 = "nUMI", gene2 = "nGene")
-    GenePlot(object = PBMC, gene1 = "nUMI", gene2 = "percent_ERCC")
     cat(" ","Now let us cut: \n",file = stderr())
     cat(" ","Please input the low & high thresholds for nGene. If none, input '-Inf' . \n",file = stderr())
     nGene_thre <- scan(sep = ";")
@@ -34,18 +30,23 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),Data_name = "temp",Res
     gc()
     PBMC <- ScaleData(object = PBMC, vars.to.regress = c("nUMI", "percent_mito"))
     print(summary(PBMC@scale.data[,1]))
-    PBMC <- RunPCA(object = PBMC, pc.genes = PBMC@var.genes, do.print = F, pcs.print = 1:5, genes.print = 5)
+    PBMC <- RunPCA(object = PBMC, pc.genes = PBMC@var.genes, do.print = F)
     PBMC <- JackStraw(object = PBMC, num.replicate = 100)
     cat(" ","Are you ready ? If ok, input 1",file = stderr())
     tem <- scan(what = "character")
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
-    JackStrawPlot(object = PBMC, PCs = 1:15)
+    JackStrawPlot(object = PBMC, PCs = 1:pm)
     cat(" ","Please save your figure. If ok, input 1",file = stderr())
     tem <- scan(what = "character")
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
-    PCHeatmap(object = PBMC, pc.use = 1:15, cells.use = 500, do.balanced = TRUE, label.columns = FALSE)
+    print(PCElbowPlot(PBMC))
+    cat(" ","Please save your figure. If ok, input 1",file = stderr())
+    tem <- scan(what = "character")
+    if(!is.null(tem)){cat("well done.\n",file = stderr())}
+    rm(tem)
+    PCHeatmap(object = PBMC, pc.use = 1:pm, cells.use = 500, do.balanced = TRUE, label.columns = FALSE)
     cat(" ","Please input the highest PC well to use.",file = stderr())
     PCmax <- scan()
     dev.off()
@@ -64,7 +65,7 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),Data_name = "temp",Res
   else{
     PBMC <- Read10X(path1)
     PBMC <- CreateSeuratObject(raw.data = PBMC,min.cells = 3,min.genes = 200,project = "PBMC")
-    mito_genes <- grep("^MT-",x = rownames(PBMC@data),value = T)
+    mito_genes <- grep("^MT\\.",x = rownames(PBMC@data),value = T)
     precent_mito <- colSums(PBMC@raw.data[mito_genes,])/colSums(PBMC@raw.data)
     PBMC <- AddMetaData(object = PBMC, metadata = precent_mito, col.name = "percent_mito")
     PBMC <- FilterCells(object = PBMC, subset.names = c("nGene", "percent_mito"), low.thresholds = c(nGene_R[1], mito_R[1]), high.thresholds = c(nGene_R[2], mito_R[2]))
@@ -542,4 +543,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-13. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-14. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
