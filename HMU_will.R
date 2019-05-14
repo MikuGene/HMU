@@ -455,14 +455,14 @@ CorTest <- function(x,y,method = "pearson",p_cut = 0.01,adj = T,row = T,name = "
   return(Corlist)}}
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 15,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F){
+scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F){
   library(Seurat)
   if(ori){HNSC <- Read10X(x)
   cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
   cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
   if(detail){
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
-    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT.")
+    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT\\.")
     print(VlnPlot(HNSC, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))
     print(CombinePlots(list(FeatureScatter(HNSC,"nCount_RNA","percent.mt"),FeatureScatter(HNSC,"nCount_RNA","nFeature_RNA"))))
     cat(" ","Now let us cut: \n",file = stderr())
