@@ -83,7 +83,6 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "t
     gc()
     print(summary(PBMC@scale.data[,1]))
     PBMC <- RunPCA(object = PBMC, pc.genes = PBMC@var.genes, do.print = F, pcs.print = 1:5, genes.print = 5)
-    PBMC <- JackStraw(object = PBMC, num.replicate = 100)
     PBMC <- FindClusters(object = PBMC, reduction.type = "pca", dims.use = 1:PC_M, resolution = Reso, print.output = 0, save.SNN = TRUE)
     gc()
     PBMC <- RunTSNE(object = PBMC, dims.use = 1:PC_M)
@@ -550,4 +549,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-14. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-15. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
