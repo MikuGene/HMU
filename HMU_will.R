@@ -511,7 +511,6 @@ scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 20,PCm
     cat(" ","Please confirm your cluster in other R. \n",file = stderr())
     return(HNSC)}
   else{
-    dev.off()
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
     HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT.")
     HNSC <- subset(HNSC,nFeature_RNA >= nGene_R[1] & nFeature_RNA <= nGene_R[2] & percent.mt >= mito_R[1] & percent.mt <= mito_R[2])
