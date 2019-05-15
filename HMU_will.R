@@ -513,6 +513,8 @@ scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 20,PCm
   else{
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
     HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT.")
+    nGene <- nGene
+    mito <- mito
     HNSC <- subset(HNSC,nFeature_RNA >= nGene[1] & nFeature_RNA <= nGene[2] & percent.mt >= mito[1] & percent.mt <= mito[2])
     HNSC <- NormalizeData(HNSC,verbose = F)
     HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 1000*nVar,verbose = F)
@@ -522,7 +524,7 @@ scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 20,PCm
     HNSC <- FindClusters(HNSC, resolution = Reso,verbose = F)
     HNSC <- RunTSNE(HNSC,dim.embed = Dim,reduction = "pca",dims.use = 1:PCmax)
     Plot <- DimPlot(HNSC,label = T,reduction = "tsne",pt.size = 1)
-    rm(HNSC)
+    rm(HNSC,nGene,mito)
     gc()
     return(Plot)}}                       
 ## 8a03a29901b31176e32928321b1349e6
