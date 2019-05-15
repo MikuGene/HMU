@@ -454,7 +454,7 @@ CorTest <- function(x,y,method = "pearson",p_cut = 0.01,adj = T,row = T,name = "
   return(Corlist)}}
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5){
+scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5){
   library(Seurat)
   if(ori){HNSC <- Read10X(x)
   cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
@@ -512,10 +512,9 @@ scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 20,PCm
     return(HNSC)}
   else{
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
-    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT.")
-    nGene <- nGene
-    mito <- mito
-    HNSC <- subset(HNSC,nFeature_RNA >= nGene[1] & nFeature_RNA <= nGene[2] & percent.mt >= mito[1] & percent.mt <= mito[2])
+    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT\\.")
+    cat(" ","Please input the low & high thresholds for nFeature and Mito. If none, input '-Inf' . Such as 200;Inf;-Inf;40 \n",file = stderr())
+    HNSC <- subset(HNSC,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
     HNSC <- NormalizeData(HNSC,verbose = F)
     HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 1000*nVar,verbose = F)
     HNSC <- ScaleData(HNSC, features = rownames(HNSC),verbose = F)
