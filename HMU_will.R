@@ -454,7 +454,7 @@ CorTest <- function(x,y,method = "pearson",p_cut = 0.01,adj = T,row = T,name = "
   return(Corlist)}}
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F){
+scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5){
   library(Seurat)
   if(ori){HNSC <- Read10X(x)
   cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
@@ -469,10 +469,10 @@ scRNA_3 <- function(x,ori = F,nGene = c(200,Inf),mito = c(-Inf,40),pmax = 20,PCm
     HNSC <- subset(HNSC,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
     print(CombinePlots(list(FeatureScatter(HNSC,"nCount_RNA","percent.mt"),FeatureScatter(HNSC,"nCount_RNA","nFeature_RNA"))))
     HNSC <- NormalizeData(HNSC)
-    HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 2000)
+    HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 1000*nVar)
     print(LabelPoints(VariableFeaturePlot(HNSC), points = head(VariableFeatures(HNSC), 10), repel = T))
     HNSC <- ScaleData(HNSC, features = rownames(HNSC))
-    HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = T,ndims.print = 1:3)
+    HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = F)
     print(VizDimLoadings(HNSC, dims = 1:(pmax-6), reduction = "pca"))
     cat(" ","Are you ready ? If ok, input 1",file = stderr())
     tem <- scan(what = "character")
