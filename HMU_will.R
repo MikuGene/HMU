@@ -455,7 +455,7 @@ CorTest <- function(x,y,method = "pearson",p_cut = 0.01,adj = T,row = T,name = "
   return(Corlist)}}
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5){
+scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,nICA = 35){
   library(Seurat)
   if(ori){HNSC <- Read10X(x)
   cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
@@ -501,6 +501,7 @@ scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Di
       if(!is.null(tem)){cat("well done.\n",file = stderr())}
       rm(tem)}
     HNSC <- RunTSNE(HNSC,dim.embed = Dim,reduction = "pca",dims.use = 1:PCmax)
+    HNSC <- RunICA(HNSC,nics = nICA,features = HNSC@active.ident)
     print(DimPlot(HNSC,dims = c(1,2),label = T,reduction = "tsne"))
     cat(" ","Please save your figure. If ok, input 1",file = stderr())
     tem <- scan(what = "character")
