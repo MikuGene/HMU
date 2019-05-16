@@ -475,7 +475,7 @@ scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Di
     HNSC <- ScaleData(HNSC, features = rownames(HNSC))
     HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = F)
     DimHeatmap(HNSC, dims = 1:pmax, cells = 500, balanced = TRUE)
-    cat(" ","Please save your figure. If ok, input 1",file = stderr())
+    cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
     tem <- scan(what = "character")
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
@@ -483,11 +483,11 @@ scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Di
     HNSC <- JackStraw(HNSC, num.replicate = 100)
     HNSC <- ScoreJackStraw(HNSC, dims = 1:(pmax))
     print(JackStrawPlot(HNSC, dims = 1:pmax, xmax = 0.1, ymax = 0.5))
-    cat(" ","Please save your figure. If ok, input 1",file = stderr())
+    cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
     print(ElbowPlot(HNSC))
-    cat(" ","Please input the highest PC well to use.",file = stderr())
+    cat(" ","Please input the highest PC well to use. \n",file = stderr())
     PCmax <- scan()
     gc()
     HNSC <- FindNeighbors(HNSC, dims = 1:PCmax)
@@ -495,14 +495,14 @@ scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Di
     if(UMap){
       HNSC <- RunUMAP(HNSC, dims = 1:PCmax)
       DimPlot(HNSC, reduction = "umap")
-      cat(" ","Please save your figure. If ok, input 1",file = stderr())
+      cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
       tem <- scan(what = "character")
       if(!is.null(tem)){cat("well done.\n",file = stderr())}
       rm(tem)}
     HNSC <- RunTSNE(HNSC,dim.embed = Dim,reduction = "pca",dims.use = 1:PCmax)
     HNSC <- RunICA(HNSC,nics = nICA,features = HNSC@active.ident)
     print(DimPlot(HNSC,dims = c(1,2),label = T,reduction = "tsne"))
-    cat(" ","Please save your figure. If ok, input 1",file = stderr())
+    cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
     tem <- scan(what = "character")
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
