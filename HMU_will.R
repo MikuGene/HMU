@@ -525,9 +525,10 @@ scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Di
     HNSC <- RunTSNE(HNSC,dim.embed = Dim,reduction = "pca",dims.use = 1:PCmax)
     print(DimPlot(HNSC,label = T,reduction = "tsne",pt.size = 0.9))
     Plot <- DimPlot(HNSC,label = T,reduction = "tsne",pt.size = 0.9)
-    rm(HNSC)
+    Fast <- list(HNSC,Plot)
+    rm(HNSC,Plot)
     gc()
-    return(Plot)}}                       
+    return(Fast)}}                       
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","scRNA_3 --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
