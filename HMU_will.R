@@ -63,7 +63,7 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "t
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
     cat(" ","Please confirm your cluster in other R. \n",file = stderr())
-    rm(mito_genes,precent_mito,ERCC_genes,precent_ERCC,nGene_thre,mito_thre,PCmax,tSNEplot)
+    rm(mito_genes,precent_mito,nGene_thre,mito_thre,PCmax)
     gc()
     save(PBMC,file = paste0(path2,Data_name,"_backup.rData"))
     return(PBMC)}
@@ -87,9 +87,10 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "t
     gc()
     PBMC <- RunTSNE(object = PBMC, dims.use = 1:PC_M)
     Plot_F <- TSNEPlot(object = PBMC,do.label = T)
-    rm(mito_genes,precent_mito,nGene_R,mito_R,PC_M,PBMC)
+    HNSC <- list(PBMC,Plot_F)
+    rm(mito_genes,precent_mito,nGene_R,mito_R,PC_M,PBMC,Plot_F)
     gc()
-    return(Plot_F)}}
+    return(HNSC)}}
 cat(" ","scRNA_anlysis --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
 Enrich <- function(x,dir = NULL,IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Kegg = T,Keggmap = T,save = T,Gomap = T,wid = 8, h = 8){
@@ -549,4 +550,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-15. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-16. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
