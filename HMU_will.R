@@ -484,6 +484,7 @@ scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Di
     HNSC <- ScoreJackStraw(HNSC, dims = 1:(pmax))
     print(JackStrawPlot(HNSC, dims = 1:pmax, xmax = 0.1, ymax = 0.5))
     cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
+    tem <- scan(what = "character")
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
     print(ElbowPlot(HNSC))
