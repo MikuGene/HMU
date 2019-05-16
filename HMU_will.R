@@ -4,7 +4,7 @@ library(plyr)
 library(dplyr)
 library(Matrix)
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7){
+scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7,seed = 233){
   library(Seurat)
   cat(" ","Hello!","Now we focus on:",path1,"\n",file = stderr())
   if(detail){
@@ -85,7 +85,7 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "t
     PBMC <- RunPCA(object = PBMC, pc.genes = PBMC@var.genes, do.print = F, pcs.print = 1:5, genes.print = 5)
     PBMC <- FindClusters(object = PBMC, reduction.type = "pca", dims.use = 1:PC_M, resolution = Reso, print.output = 0, save.SNN = TRUE)
     gc()
-    PBMC <- RunTSNE(object = PBMC, dims.use = 1:PC_M)
+    PBMC <- RunTSNE(object = PBMC, dims.use = 1:PC_M, seed.use = seed)
     Plot_F <- TSNEPlot(object = PBMC,do.label = T)
     HNSC <- list(PBMC,Plot_F)
     rm(mito_genes,precent_mito,nGene_R,mito_R,PC_M,PBMC,Plot_F)
