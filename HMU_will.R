@@ -159,7 +159,6 @@ Enrich <- function(x,dir = NULL,IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Kegg 
 cat(" ","Enrich --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
 remRow <- function(x,Rem=0.1,raito = T){
-  x[nrow(x)+1,] <- 0
   a <- as.matrix(x)
   a <- t(apply(a,1,as.numeric))
   r <-as.numeric(apply(a,1,function(i) sum(i == 0)))
