@@ -252,7 +252,7 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   gc()
   return(aa)}
 ## 8a03a29901b31176e32928321b1349e6
-WGCNA_Detail <- function(x,y,custom = F,Cliorder=NULL,Trait=NULL,Color=NULL,name = "temp",Mapcolor=Color,MMCutgene=0.20,GSCutgene=0.20,coefficient = 0.02,Cys = T,OnlyCys = F){
+WGCNA_Detail <- function(x,y,Cliorder=NULL,custom = F,Trait="temp",Color=NULL,name = "temp",Mapcolor=Color,MMCutgene=0.20,GSCutgene=0.20,coefficient = 0.02,Cys = T,OnlyCys = F){
   Oripath <- getwd()
   dir.create(name)
   setwd(name)
@@ -276,8 +276,6 @@ WGCNA_Detail <- function(x,y,custom = F,Cliorder=NULL,Trait=NULL,Color=NULL,name
     verboseScatterplot(abs(MM[moduleGenes, column]), abs(GS[moduleGenes, 1]),xlab = paste("Module Membership in", Color, "module"), ylab = paste("Gene significance for",Trait),abline = 1,abline.lty = 1,abline.color = Mapcolor,main = paste("Module membership vs. Gene significance\n"),cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = Mapcolor)
     abline(h = GSCutgene, v = MMCutgene, col = "red")
     aa<-data.frame(MM=MM[moduleGenes, column],GS=GS[moduleGenes, 1],absMM=abs(MM[moduleGenes, column]),absGS=abs(GS[moduleGenes, 1]),row.names =rownames(GS)[moduleGenes])
-    print("Now please enter the Dataclass name. Such as: LGG_FPKMUQ_mRNA")
-    name<-scan(what = "character")
     write.csv(aa,paste(name,Trait,Color,"MMandGS.csv",sep = "_"))
     aa<-aa[which(aa[,3] > MMCutgene & aa[,4] > GSCutgene),]
     ac<-rownames(aa)
