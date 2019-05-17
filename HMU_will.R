@@ -4,6 +4,8 @@ library(plyr)
 library(dplyr)
 library(Matrix)
 ## 8a03a29901b31176e32928321b1349e6
+See <- function(x, num = 7){return(x[1:7,1:7])}
+## 8a03a29901b31176e32928321b1349e6
 scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7,seed = 233){
   library(Seurat)
   cat(" ","Hello!","Now we focus on:",path1,"\n",file = stderr())
