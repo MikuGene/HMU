@@ -252,7 +252,7 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   gc()
   return(aa)}
 ## 8a03a29901b31176e32928321b1349e6
-WGCNA_Detail <- function(x,y,Cliorder=NULL,Trait=NULL,Color=NULL,name = "temp",Mapcolor=Color,MMCutgene=0.20,GSCutgene=0.20,coefficient = 0.02,Cys = T,OnlyCys = F){
+WGCNA_Detail <- function(x,y,custom = F,Cliorder=NULL,Trait=NULL,Color=NULL,name = "temp",Mapcolor=Color,MMCutgene=0.20,GSCutgene=0.20,coefficient = 0.02,Cys = T,OnlyCys = F){
   Oripath <- getwd()
   dir.create(name)
   setwd(name)
@@ -555,4 +555,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-16. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-17. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
