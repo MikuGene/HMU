@@ -229,6 +229,7 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   rm(net)
   gc()
   gc()
+  tomP <- NULL
   if(Map){
     dissTOM<-1-TOMsimilarityFromExpr(FPKM, power = okpower)
     plotTOM<-dissTOM^7
@@ -236,7 +237,7 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
     rm(dissTOM)
     gc()
     sizeGrWindow(9,9)
-    TOMplot(plotTOM, geneTree, moduleColors, main = "Network heatmap of all modules")
+    tomP <- TOMplot(plotTOM, geneTree, moduleColors, main = "Network heatmap of all modules")
     rm(plotTOM)}
   rm(geneTree)
   collectGarbage()
@@ -246,8 +247,8 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   print(colnames(FPKM)[which(colnames(FPKM) %in% Targetgene)])
   print(moduleColors[which(colnames(FPKM) %in% Targetgene)])
   write.csv(data.frame(Gene = Targetgene, Color = moduleColors[which(colnames(FPKM) %in% Targetgene)]),paste(Targetgene[1],"colorFrame.csv",sep = "_"),row.names = F)
-  aa<-list(MEs,moduleColors,okpower,FPKM)
-  rm(MEs,moduleColors,okpower,FPKM)
+  aa<-list(MEs,moduleColors,okpower,FPKM,tomP)
+  rm(MEs,moduleColors,okpower,FPKM,tomP)
   gc()
   return(aa)}
 ## 8a03a29901b31176e32928321b1349e6
