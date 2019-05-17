@@ -270,7 +270,7 @@ WGCNA_Detail <- function(x,y,Cliorder=NULL,Trait=NULL,Color=NULL,name = "temp",M
     names(GSPvalue)<-paste("p.GS.", names(weight), sep="")
     column<-match(Color, Names)
     moduleGenes<-y[[2]]==Color
-    sizeGrWindow(7, 7)
+    sizeGrWindow(4, 4)
     par(mfrow = c(1,1))
     verboseScatterplot(abs(MM[moduleGenes, column]), abs(GS[moduleGenes, 1]),xlab = paste("Module Membership in", Color, "module"), ylab = paste("Gene significance for",Trait),abline = 1,abline.lty = 1,abline.color = Mapcolor,main = paste("Module membership vs. Gene significance\n"),cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = Mapcolor)
     abline(h = GSCutgene, v = MMCutgene, col = "red")
