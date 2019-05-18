@@ -121,10 +121,8 @@ Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Keg
     if(Gomap){
       library(ggplot2)
       library(stringr)
-      dev.set()
       ggplot(data=ac,aes(ac$Count/length(as.character(GeneID[,2])),ac$Description))+geom_point(aes(size=ac$Count,color=-1*log10(ac$qvalue),shape=ac$ONTOLOGY))+scale_colour_gradient(low="blue",high="red")+labs(color=expression(-log[10](Qvalue)),size="Gene number",shape="Ontology",x="GeneRatio",y=NULL,title="GO enrichment")+theme_bw()+theme(plot.title = element_text(hjust = 0.5))+scale_y_discrete(labels = function(x) str_wrap(x,width = 50))
-      if(save){ggsave(paste(IDname,"tiff",sep = "."),device = "tiff",width = wid,height = h)}
-      dev.off()}
+      if(save){ggsave(paste(IDname,"tiff",sep = "."),device = "tiff",width = wid,height = h)}}
     gc()}
   if(Kegg){
     bb <- enrichKEGG(gene = as.character(GeneID[,2]),organism = "human",pvalueCutoff = Cut)
@@ -276,6 +274,7 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   return(aa)}
 ## 8a03a29901b31176e32928321b1349e6
 WGCNA_CliLink<-function(x,y,xais = T,yais = T,plot = T){
+  library(WGCNA)
   print("Now please enter one class name. Such as: Grade")
   class <- scan(what = "character")
   aa<-x[[1]][match(grep(class,rownames(x[[1]]),value = T),rownames(x[[1]])),match(rownames(y[[4]]),colnames(x[[1]]))]
@@ -315,7 +314,7 @@ WGCNA_Detail <- function(x,y,Cliorder=NULL,custom = F,Trait="temp",Color=NULL,na
     moduleGenes<-y[[2]]==Color
     sizeGrWindow(4, 4)
     par(mfrow = c(1,1))
-    verboseScatterplot(abs(MM[moduleGenes, column]), abs(GS[moduleGenes, 1]),xlab = paste("Module Membership in", Color, "module"), ylab = paste("Gene significance for",Trait),abline = 1,abline.lty = 1,abline.color = Mapcolor,main = paste("Module membership vs. Gene significance\n"),cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = Mapcolor)
+    if(plot){verboseScatterplot(abs(MM[moduleGenes, column]), abs(GS[moduleGenes, 1]),xlab = paste("Module Membership in", Color, "module"), ylab = paste("Gene significance for",Trait),abline = 1,abline.lty = 1,abline.color = Mapcolor,main = paste("Module membership vs. Gene significance\n"),cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = Mapcolor)}
     abline(h = GSCutgene, v = MMCutgene, col = "red")
     aa<-data.frame(MM=MM[moduleGenes, column],GS=GS[moduleGenes, 1],absMM=abs(MM[moduleGenes, column]),absGS=abs(GS[moduleGenes, 1]),row.names =rownames(GS)[moduleGenes])
     write.csv(aa,paste(name,Trait,Color,"MMandGS.csv",sep = "_"))
