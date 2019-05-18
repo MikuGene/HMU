@@ -125,7 +125,7 @@ Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Keg
       if(save){ggsave(paste(IDname,"tiff",sep = "."),device = "tiff",width = wid,height = h)}}
     gc()}
   if(Kegg){
-    bb <- enrichKEGG(gene = as.character(GeneID[,2]),organism = "human",pvalueCutoff = Cut)
+    bb <- enrichKEGG(gene = as.character(GeneID[,2]),organism = "hsa",pvalueCutoff = Cut)
     bc <- data.frame(bb)
     rm(bb)
     gc()
