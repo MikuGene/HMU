@@ -275,7 +275,7 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   gc()
   return(aa)}
 ## 8a03a29901b31176e32928321b1349e6
-WGCNA_CliLink<-function(x,y,xais = T,yais = T){
+WGCNA_CliLink<-function(x,y,xais = T,yais = T,plot = T){
   print("Now please enter one class name. Such as: Grade")
   class <- scan(what = "character")
   aa<-x[[1]][match(grep(class,rownames(x[[1]]),value = T),rownames(x[[1]])),match(rownames(y[[4]]),colnames(x[[1]]))]
@@ -286,7 +286,7 @@ WGCNA_CliLink<-function(x,y,xais = T,yais = T){
   dim(textMatrix) = dim(TraitCor)
   if(xais){name = grep(class,rownames(x[[1]]),value = T)}else{name = NULL}
   if(yais){name2 = colnames(y[[1]])}else{name2 = NULL}
-  labeledHeatmap(Matrix=TraitCor,xLabels = name,yLabels = name2,colorLabels = F,colors = blueWhiteRed(50),textMatrix = textMatrix,setStdMargins = FALSE,cex.text = 0.5,zlim = c(-1,1),main = paste("Module-trait relationships"))
+  if(plot){labeledHeatmap(Matrix=TraitCor,xLabels = name,yLabels = name2,colorLabels = F,colors = blueWhiteRed(50),textMatrix = textMatrix,setStdMargins = FALSE,cex.text = 0.5,zlim = c(-1,1),main = paste("Module-trait relationships"))}
   rm(TraitCor,TraitPvalue,textMatrix)
   a<-list(aa,substring(names(y[[1]]),3),x[[1]])
   rm(aa)
