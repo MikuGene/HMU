@@ -312,8 +312,8 @@ WGCNA_Detail <- function(x,y,Cliorder=NULL,plot = T,custom = F,Trait="temp",Colo
     names(GSPvalue)<-paste("p.GS.", names(weight), sep="")
     column<-match(Color, Names)
     moduleGenes<-y[[2]]==Color
-    if(plot){verboseScatterplot(abs(MM[moduleGenes, column]), abs(GS[moduleGenes, 1]),xlab = paste("Module Membership in", Color, "module"), ylab = paste("Gene significance for",Trait),abline = 1,abline.lty = 1,abline.color = Mapcolor,main = paste("Module membership vs. Gene significance\n"),cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = Mapcolor)}
-    abline(h = GSCutgene, v = MMCutgene, col = "red")
+    if(plot){verboseScatterplot(abs(MM[moduleGenes, column]), abs(GS[moduleGenes, 1]),xlab = paste("Module Membership in", Color, "module"), ylab = paste("Gene significance for",Trait),abline = 1,abline.lty = 1,abline.color = Mapcolor,main = paste("Module membership vs. Gene significance\n"),cex.main = 1.2, cex.lab = 1.2, cex.axis = 1.2, col = Mapcolor)
+    abline(h = GSCutgene, v = MMCutgene, col = "red")}
     aa<-data.frame(MM=MM[moduleGenes, column],GS=GS[moduleGenes, 1],absMM=abs(MM[moduleGenes, column]),absGS=abs(GS[moduleGenes, 1]),row.names =rownames(GS)[moduleGenes])
     write.csv(aa,paste(name,Trait,Color,"MMandGS.csv",sep = "_"))
     aa<-aa[which(aa[,3] > MMCutgene & aa[,4] > GSCutgene),]
