@@ -301,8 +301,8 @@ WGCNA_Detail <- function(x,y,Cliorder=NULL,custom = F,Trait="temp",Color=NULL,na
   dir.create(name)
   setwd(name)
   if(!OnlyCys){
-    weight<-x
     if(!custom){weight<-as.data.frame(x[[1]][,Cliorder])}
+    else{weight<-x}
     names(weight)<-Trait
     Names<-substring(names(y[[1]]), 3)
     MM<-as.data.frame(cor(y[[4]], y[[1]], use = "p"))
