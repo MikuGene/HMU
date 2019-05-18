@@ -293,7 +293,7 @@ WGCNA_CliLink<-function(x,y,xais = T,yais = T,plot = T){
   gc()
   return(a)}
 ## 8a03a29901b31176e32928321b1349e6
-WGCNA_Detail <- function(x,y,Cliorder=NULL,custom = F,Trait="temp",Color=NULL,name = "temp",Mapcolor=Color,MMCutgene=0.20,GSCutgene=0.20,coefficient = 0.02,Cys = T,OnlyCys = F){
+WGCNA_Detail <- function(x,y,Cliorder=NULL,plot = T,custom = F,Trait="temp",Color=NULL,name = "temp",Mapcolor=Color,MMCutgene=0.20,GSCutgene=0.20,coefficient = 0.02,Cys = T,OnlyCys = F){
   Oripath <- getwd()
   dir.create(name)
   setwd(name)
