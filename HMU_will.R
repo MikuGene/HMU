@@ -4,15 +4,15 @@ library(plyr)
 library(dplyr)
 library(Matrix)
 ## 8a03a29901b31176e32928321b1349e6
-See <- function(x, num = 7){return(x[1:7,1:7])}
+See <- function(x, num1 = 7，num2 = num1){return(x[1:num,1:num])}
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7,seed = 233){
+scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),mito_name = "^MT\\.",pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7,seed = 233){
   library(Seurat)
   cat(" ","Hello!","Now we focus on:",path1,"\n",file = stderr())
   if(detail){
     PBMC <- Read10X(path1)
     PBMC <- CreateSeuratObject(raw.data = PBMC,min.cells = 3,min.genes = 200,project = "PBMC")
-    mito_genes <- grep("^MT\\.",x = rownames(PBMC@data),value = T)
+    mito_genes <- grep(mito_name,x = rownames(PBMC@data),value = T)
     precent_mito <- colSums(PBMC@raw.data[mito_genes,])/colSums(PBMC@raw.data)
     PBMC <- AddMetaData(object = PBMC, metadata = precent_mito, col.name = "percent_mito")
     par(mfrow = c(1, 2))
@@ -72,7 +72,7 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "t
   else{
     PBMC <- Read10X(path1)
     PBMC <- CreateSeuratObject(raw.data = PBMC,min.cells = 3,min.genes = 200,project = "PBMC")
-    mito_genes <- grep("^MT\\.",x = rownames(PBMC@data),value = T)
+    mito_genes <- grep(mito_name,x = rownames(PBMC@data),value = T)
     precent_mito <- colSums(PBMC@raw.data[mito_genes,])/colSums(PBMC@raw.data)
     PBMC <- AddMetaData(object = PBMC, metadata = precent_mito, col.name = "percent_mito")
     PBMC <- FilterCells(object = PBMC, subset.names = c("nGene", "percent_mito"), low.thresholds = c(nGene_R[1], mito_R[1]), high.thresholds = c(nGene_R[2], mito_R[2]))
@@ -95,7 +95,7 @@ scRNA_anlysis <- function(path1 = getwd(),path2 = getwd(),pm = 20,Data_name = "t
     return(HNSC)}}
 cat(" ","scRNA_anlysis --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-Enrich <- function(x,dir = NULL,IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Kegg = T,Keggmap = T,save = T,Gomap = T,wid = 8, h = 8){
+Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Kegg = T,Keggmap = T,save = T,Gomap = T,wid = 8, h = 8){
   library(clusterProfiler)
   library(ReactomePA)
   path <- getwd()
@@ -169,6 +169,31 @@ remRow <- function(x,Rem=0.1,raito = T){
   rm(remove)
   gc()
   return(Frame)}                       
+## 8a03a29901b31176e32928321b1349e6
+WGCNA_CliCustom<- function(x,y,IDname = "A0_Samples",Need_t = T,save = F,TCGA = F){
+  if(Need_t){x <- data.frame(t(x))}
+  if(TCGA){
+  colnames(y)<-gsub("\\.","-",substr(toupper(colnames(y)),1,12))
+  x[IDname,]<-gsub("\\.","-",substr(toupper(x[IDname,]),1,12))}
+  ComID<-intersect(colnames(y),x[IDname,])
+  FPKMRows<-match(ComID,colnames(y))
+  FPKMSim<-y[,FPKMRows]
+  traitRows<-match(ComID,x[IDname,])
+  simpleCli<-x[-which(rownames(x)==IDname),traitRows]
+  colnames(simpleCli) = x[which(rownames(x)==IDname),traitRows]
+  rownames(simpleCli) = rownames(x)[-which(rownames(x)==IDname)]
+  rm(ComID,FPKMRows,traitRows)
+  if(save){
+  print("Now please write WGCNA name. Such as: LGG_FPKMUQ_mRNA")
+  name<-scan(what = "character")
+  write.csv(simpleCli,paste(name,"WGCNA_clinical.csv",sep = "_"))
+  write.csv(FPKMSim,paste(name,"WGCNA_FPKM.csv",sep = "_"))
+  rm(name)}
+  gc()
+  a<-list(simpleCli,FPKMSim)
+  rm(simpleCli,FPKMSim)
+  gc()
+  return(a)}
 ## 8a03a29901b31176e32928321b1349e6
 WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 30,Map = F,custom = F){
   library(WGCNA)
@@ -251,6 +276,27 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   rm(MEs,moduleColors,okpower,FPKM,tomP)
   gc()
   return(aa)}
+## 8a03a29901b31176e32928321b1349e6
+WGCNA_CliLink<-function(x,y,xais = T,yais = T){
+  print("Now please enter one class name. Such as: Grade")
+  class <- scan(what = "character")
+  aa<-x[[1]][match(grep(class,rownames(x[[1]]),value = T),rownames(x[[1]])),match(rownames(y[[4]]),colnames(x[[1]]))]
+  aa<-apply(aa, 1, as.numeric)
+  TraitCor<-cor(y[[1]], aa, use = "p")
+  TraitPvalue<-corPvalueStudent(TraitCor, nrow(y[[1]]))
+  textMatrix<-paste(signif(TraitCor, 2), "\n(",signif(TraitPvalue, 1), ")", sep = "")
+  dim(textMatrix) = dim(TraitCor)
+  par(mar = c(6, 8.5, 3, 3))
+  sizeGrWindow(10,6)
+  if(xais){name = grep(class,rownames(x[[1]]),value = T)}else{name = NULL}
+  if(yais){name2 = colnames(y[[1]])}else{name2 = NULL}
+  labeledHeatmap(Matrix=TraitCor,xLabels = name,yLabels = name2,colorLabels = F,colors = blueWhiteRed(50),textMatrix = textMatrix,setStdMargins = FALSE,cex.text = 0.5,zlim = c(-1,1),main = paste("Module-trait relationships"))
+  rm(TraitCor,TraitPvalue,textMatrix)
+  a<-list(aa,substring(names(y[[1]]),3),x[[1]])
+  rm(aa)
+  print(a[[2]])
+  gc()
+  return(a)}
 ## 8a03a29901b31176e32928321b1349e6
 WGCNA_Detail <- function(x,y,Cliorder=NULL,custom = F,Trait="temp",Color=NULL,name = "temp",Mapcolor=Color,MMCutgene=0.20,GSCutgene=0.20,coefficient = 0.02,Cys = T,OnlyCys = F){
   Oripath <- getwd()
