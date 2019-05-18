@@ -284,8 +284,6 @@ WGCNA_CliLink<-function(x,y,xais = T,yais = T){
   TraitPvalue<-corPvalueStudent(TraitCor, nrow(y[[1]]))
   textMatrix<-paste(signif(TraitCor, 2), "\n(",signif(TraitPvalue, 1), ")", sep = "")
   dim(textMatrix) = dim(TraitCor)
-  par(mar = c(6, 8.5, 3, 3))
-  sizeGrWindow(10,6)
   if(xais){name = grep(class,rownames(x[[1]]),value = T)}else{name = NULL}
   if(yais){name2 = colnames(y[[1]])}else{name2 = NULL}
   labeledHeatmap(Matrix=TraitCor,xLabels = name,yLabels = name2,colorLabels = F,colors = blueWhiteRed(50),textMatrix = textMatrix,setStdMargins = FALSE,cex.text = 0.5,zlim = c(-1,1),main = paste("Module-trait relationships"))
