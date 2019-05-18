@@ -264,8 +264,6 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
     sizeGrWindow(9,9)
     tomP <- TOMplot(plotTOM, geneTree, moduleColors, main = "Network heatmap of all modules")
     rm(plotTOM)}
-  rm(geneTree)
-  collectGarbage()
   gc()
   print("Now we can check some interesting target")
   Targetgene<-scan(what = "character",sep = ",")
@@ -273,7 +271,7 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   print(moduleColors[which(colnames(FPKM) %in% Targetgene)])
   write.csv(data.frame(Gene = Targetgene, Color = moduleColors[which(colnames(FPKM) %in% Targetgene)]),paste(Targetgene[1],"colorFrame.csv",sep = "_"),row.names = F)
   aa<-list(MEs,moduleColors,okpower,FPKM,tomP)
-  rm(MEs,moduleColors,okpower,FPKM,tomP)
+  rm(MEs,moduleColors,okpower,FPKM,tomP,geneTree)
   gc()
   return(aa)}
 ## 8a03a29901b31176e32928321b1349e6
