@@ -501,6 +501,7 @@ CrossCor <- function(x,row = T){
   Re_Cor_s <- matrix(rep(NA,nrow(x)^2),nrow = nrow(x))
   Re_Pval_s <- matrix(rep(NA,nrow(x)^2),nrow = nrow(x))
   Re_Padj_s <- matrix(rep(NA,nrow(x)^2),nrow = nrow(x))
+  Re_G <- data.frame()
   if(!row){x <- t(x)}
   for (i in 1:nrow(x)) {
       cat("Cor","Row",i,"\n")
@@ -511,10 +512,11 @@ CrossCor <- function(x,row = T){
       Re_Cor_s[i,] <- Re$Cor_s
       Re_Pval_s[i,] <- Re$P_value_s
       Re_Padj_s[i,] <- Re$P_adj_s
+      Re_G <- rbind(Re_G,Re)
       rm(Re)
       gc()
   cat("Cor","Row",i,"done.","\n")}
-  Relist = list(Re_Cor_p,Re_Padj_p,Re_Pval_p,Re_Cor_s,Re_Padj_s,Re_Pval_s)
+  Relist = list(Re_Cor_p,Re_Padj_p,Re_Pval_p,Re_Cor_s,Re_Padj_s,Re_Pval_s,Re_G)
   return(Relist)}
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
