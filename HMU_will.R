@@ -515,7 +515,7 @@ CrossCor <- function(x,row = T){
       Re_G <- rbind(Re_G,Re)
       rm(Re)
       gc()
-  cat("Cor","Row",i,"done.","\n")}
+  cat("Cor","Row",i,"done.","\n",file = stderr())}
   Relist = list(Re_Cor_p,Re_Padj_p,Re_Pval_p,Re_Cor_s,Re_Padj_s,Re_Pval_s,Re_G)
   return(Relist)}
 ## 8a03a29901b31176e32928321b1349e6
@@ -618,4 +618,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-18. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-19. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
