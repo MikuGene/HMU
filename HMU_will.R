@@ -493,6 +493,30 @@ CorTest <- function(x,y,method = "pearson",p_cut = 0.01,adj = T,row = T,name = "
   Corlist$State[as.numeric(Corlist$Cor) > 0] <- "pos"
   Corlist$State[as.numeric(Corlist$Cor) < 0] <- "neg"
   return(Corlist)}}
+## 8a03a29901b31176e32928321b1349e6
+CrossCor <- function(x,row = T){
+  Re_Cor_p <- matrix(rep(NA,nrow(x)^2),nrow = nrow(x))
+  Re_Pval_p <- matrix(rep(NA,nrow(x)^2),nrow = nrow(x))
+  Re_Padj_p <- matrix(rep(NA,nrow(x)^2),nrow = nrow(x))
+  Re_Cor_s <- matrix(rep(NA,nrow(x)^2),nrow = nrow(x))
+  Re_Pval_s <- matrix(rep(NA,nrow(x)^2),nrow = nrow(x))
+  Re_Padj_s <- matrix(rep(NA,nrow(x)^2),nrow = nrow(x))
+  if(!row){x <- t(x)}
+  for (i in 1:nrow(x)) {
+      cat("Cor","Row",i,"\n")
+      Re <- CorTest(x[i,],x,name = rownames(x[i,]),method = "all")
+      Re_Cor_p[i,] <- Re$Cor
+      Re_Pval_p[i,] <- Re$P_value
+      Re_Padj_p[i,] <- Re$P_adj
+      Re_Cor_s[i,] <- Re$Cor_s
+      Re_Pval_s[i,] <- Re$P_value_s
+      Re_Padj_s[i,] <- Re$P_adj_s
+      rm(Re)
+      gc()
+  cat("Cor","Row",i,"done.","\n")}
+  Relist = list(Re_Cor_p,Re_Padj_p,Re_Pval_p,Re_Cor_s,Re_Padj_s,Re_Pval_s)
+  return(Relist)}
+## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
 scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,nICA = 35){
