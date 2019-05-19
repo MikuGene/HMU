@@ -441,7 +441,7 @@ Ttest <- function(x,y,Need_T = F,pval = 0.05){
   RE$Sig[RE$Pval <= pval] <- "Yes"
   return(RE)}                       
 ## 8a03a29901b31176e32928321b1349e6
-CorTest <- function(x,y,method = "pearson",p_cut = 0.01,adj = T,row = T,name = "Main"){
+CorTest <- function(x,y,method = "pearson",p_cut = 0.01,adj = T,row = T,name = "Main",Order = F){
   if(!row){y <- t(y)}
   if(method == "all"){
     method <- "pearson"
@@ -464,7 +464,7 @@ CorTest <- function(x,y,method = "pearson",p_cut = 0.01,adj = T,row = T,name = "
     Corlist[,8] <- p.adjust(Corlist[,7],method="BH")
     Corlist <- data.frame(Corlist)
     colnames(Corlist) <- c("Mainname","Corname","Cor","P_value","P_adj","Cor_s","P_value_s","P_adj_s")
-    Corlist <- Corlist[order(Corlist$P_adj),]
+    if(Order){Corlist <- Corlist[order(Corlist$P_adj),]}
     Corlist$Sig <- "No"
     if(adj){Corlist$Sig[as.numeric(Corlist$P_adj) < p_cut] <- "Yes"}
     else{Corlist$Sig[as.numeric(Corlist$P_value) < p_cut] <- "Yes"}
