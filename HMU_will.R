@@ -387,7 +387,7 @@ DESeq2 <- function(countMatrix, pData){
   res<-res[order(res$padj),]
   return(res)}
 ## 8a03a29901b31176e32928321b1349e6
-DErun <- function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = F){
+DErun <- function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = T,name = "temp"){
   library(DESeq2)
   if(run){
     positive_ReadCount<-x
@@ -402,11 +402,7 @@ DErun <- function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = F){
     pData<-data.frame(phenotype = factor(feature,levels=c("Neg", "Pos")))
     rownames(pData)<-colnames(ReadCount)
     diffExp<-DESeq2(ReadCount,pData)
-    if(save){
-      print("Please enter the name you want to save. Such as: LGG_FPKMUQ_lncRNA_Grade")
-      name<-scan(what = "character")
-      write.csv(diffExp,paste(name,"padj.csv",sep = "_"))
-      rm(name)}
+    if(save){write.csv(diffExp,paste(name,"padj.csv",sep = "_"))}
     DEgene<-as.data.frame(diffExp)
     DEname<-rownames(DEgene[DEgene$padj<=pvalue & abs(DEgene$log2FoldChange)>=log2FC,])
     print(sort(DEname))
@@ -618,4 +614,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-19. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-19-20:08. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
