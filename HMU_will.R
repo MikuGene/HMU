@@ -563,7 +563,6 @@ scRNA_3 <- function(x,ori = F,Mito = "^MT\\.",pmax = 20,PCmax = NULL,Reso = 0.5,
       if(!is.null(tem)){cat("well done.\n",file = stderr())}
       rm(tem)}
     HNSC <- RunTSNE(HNSC,dim.embed = Dim,reduction = "pca",dims.use = 1:PCmax)
-    HNSC <- RunICA(HNSC,nics = nICA,features = HNSC@active.ident)
     print(DimPlot(HNSC,dims = c(1,2),label = T,reduction = "tsne"))
     cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
     tem <- scan(what = "character")
