@@ -517,14 +517,14 @@ CrossCor <- function(x,row = T){
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,nICA = 35){
+scRNA_3 <- function(x,ori = F,Mito = "^MT\\.",pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,nICA = 35){
   library(Seurat)
   if(ori){HNSC <- Read10X(x)
   cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
   cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
   if(detail){
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
-    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT\\.")
+    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito)
     print(VlnPlot(HNSC, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))
     print(CombinePlots(list(FeatureScatter(HNSC,"nCount_RNA","percent.mt"),FeatureScatter(HNSC,"nCount_RNA","nFeature_RNA"))))
     cat(" ","Now let us cut: \n",file = stderr())
@@ -576,7 +576,7 @@ scRNA_3 <- function(x,ori = F,pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Di
     return(HNSC)}
   else{
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
-    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = "^MT\\.")
+    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito)
     cat(" ","Please input the low & high thresholds for nFeature and Mito. If none, input '-Inf' . Such as 200;Inf;-Inf;40 \n",file = stderr())
     HNSC <- subset(HNSC,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
     HNSC <- NormalizeData(HNSC,verbose = F)
@@ -614,4 +614,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-19-20:08. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-20-15:46. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
