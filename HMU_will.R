@@ -517,15 +517,21 @@ CrossCor <- function(x,row = T){
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,ori = F,Mito = "^MT\\.",pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,nICA = 35){
+scRNA_3 <- function(x,y = NULL,if_two = F,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = "^MT\\.",pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,nICA = 35){
   library(Seurat)
   if(ori){HNSC <- Read10X(x)
   cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
   cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
   if(detail){
+    if(!if_two){
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
     HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito)
     print(VlnPlot(HNSC, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))
+    cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
+    tem <- scan(what = "character")
+    if(!is.null(tem)){cat("well done.\n",file = stderr())}
+    rm(tem)
+    gc()
     print(CombinePlots(list(FeatureScatter(HNSC,"nCount_RNA","percent.mt"),FeatureScatter(HNSC,"nCount_RNA","nFeature_RNA"))))
     cat(" ","Now let us cut: \n",file = stderr())
     cat(" ","Please input the low & high thresholds for nFeature and Mito. If none, input '-Inf' . Such as 200;Inf;-Inf;40 \n",file = stderr())
@@ -533,7 +539,56 @@ scRNA_3 <- function(x,ori = F,Mito = "^MT\\.",pmax = 20,PCmax = NULL,Reso = 0.5,
     print(CombinePlots(list(FeatureScatter(HNSC,"nCount_RNA","percent.mt"),FeatureScatter(HNSC,"nCount_RNA","nFeature_RNA"))))
     HNSC <- NormalizeData(HNSC)
     HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 1000*nVar)
-    print(LabelPoints(VariableFeaturePlot(HNSC), points = head(VariableFeatures(HNSC), 10), repel = T))
+    print(LabelPoints(VariableFeaturePlot(HNSC), points = head(VariableFeatures(HNSC), 10), repel = T))}
+    else{
+      HNSC1 <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
+      HNSC1$Group <- name1
+      HNSC1[["percent.mt"]] <- PercentageFeatureSet(object = HNSC1, pattern = Mito)
+      print(VlnPlot(HNSC1, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))
+      cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
+      tem <- scan(what = "character")
+      if(!is.null(tem)){cat("well done.\n",file = stderr())}
+      rm(tem)
+      gc()
+      print(CombinePlots(list(FeatureScatter(HNSC1,"nCount_RNA","percent.mt"),FeatureScatter(HNSC1,"nCount_RNA","nFeature_RNA"))))
+      cat(" ","Now let us cut: \n",file = stderr())
+      cat(" ","Please input the low & high thresholds for nFeature and Mito. If none, input '-Inf' . Such as 200;Inf;-Inf;40 \n",file = stderr())
+      HNSC1 <- subset(HNSC1,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
+      print(CombinePlots(list(FeatureScatter(HNSC1,"nCount_RNA","percent.mt"),FeatureScatter(HNSC1,"nCount_RNA","nFeature_RNA"))))
+      HNSC1 <- NormalizeData(HNSC1)
+      HNSC1 <- FindVariableFeatures(HNSC1, selection.method = "vst", nfeatures = 1000*nVar)
+      print(LabelPoints(VariableFeaturePlot(HNSC1), points = head(VariableFeatures(HNSC1), 10), repel = T))
+      cat(" ","Now First one done. \n",file = stderr())
+      cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
+      tem <- scan(what = "character")
+      if(!is.null(tem)){cat("well done.\n",file = stderr())}
+      rm(tem)
+      gc()
+      SCC090 <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
+      SCC090$Group <- name1
+      SCC090[["percent.mt"]] <- PercentageFeatureSet(object = SCC090, pattern = Mito)
+      print(VlnPlot(SCC090, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))
+      cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
+      tem <- scan(what = "character")
+      if(!is.null(tem)){cat("well done.\n",file = stderr())}
+      rm(tem)
+      gc()
+      print(CombinePlots(list(FeatureScatter(SCC090,"nCount_RNA","percent.mt"),FeatureScatter(SCC090,"nCount_RNA","nFeature_RNA"))))
+      cat(" ","Now let us cut: \n",file = stderr())
+      cat(" ","Please input the low & high thresholds for nFeature and Mito. If none, input '-Inf' . Such as 200;Inf;-Inf;40 \n",file = stderr())
+      SCC090 <- subset(SCC090,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
+      print(CombinePlots(list(FeatureScatter(SCC090,"nCount_RNA","percent.mt"),FeatureScatter(SCC090,"nCount_RNA","nFeature_RNA"))))
+      SCC090 <- NormalizeData(SCC090)
+      SCC090 <- FindVariableFeatures(SCC090, selection.method = "vst", nfeatures = 1000*nVar)
+      print(LabelPoints(VariableFeaturePlot(SCC090), points = head(VariableFeatures(SCC090), 10), repel = T))
+      cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
+      tem <- scan(what = "character")
+      if(!is.null(tem)){cat("well done.\n",file = stderr())}
+      rm(tem)
+      gc()
+      Anchors <- FindIntegrationAnchors(list(HNSC1, SCC090), dims = 1:20)
+      HNSC <- IntegrateData(anchorset = Anchors, dims = 1:20)
+      DefaultAssay(HNSC) <- "Integrated"}
     HNSC <- ScaleData(HNSC, features = rownames(HNSC))
     HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = F)
     DimHeatmap(HNSC, dims = 1:pmax, cells = 500, balanced = TRUE)
@@ -590,7 +645,7 @@ scRNA_3 <- function(x,ori = F,Mito = "^MT\\.",pmax = 20,PCmax = NULL,Reso = 0.5,
     Fast <- list(HNSC,Plot)
     rm(HNSC,Plot)
     gc()
-    return(Fast)}}                       
+    return(Fast)}}                     
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","scRNA_3 --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
