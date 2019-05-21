@@ -517,7 +517,7 @@ CrossCor <- function(x,row = T){
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = "^MT\\.",pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,nICA = 35){
+scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,nICA = 35){
   library(Seurat)
   if(ori){HNSC <- Read10X(x)
   cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
@@ -525,7 +525,7 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
   if(detail){
     if(!if_two){
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
-    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito)
+    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito[1])
     if(if_plot){print(VlnPlot(HNSC, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))}
     cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
     tem <- scan(what = "character")
@@ -543,7 +543,7 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
     else{
       HNSC1 <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
       HNSC1$Group <- name1
-      HNSC1[["percent.mt"]] <- PercentageFeatureSet(object = HNSC1, pattern = Mito)
+      HNSC1[["percent.mt"]] <- PercentageFeatureSet(object = HNSC1, pattern = Mito[1])
       if(if_plot){print(VlnPlot(HNSC1, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))}
       cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
       tem <- scan(what = "character")
@@ -566,7 +566,7 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
       gc()
       SCC090 <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
       SCC090$Group <- name1
-      SCC090[["percent.mt"]] <- PercentageFeatureSet(object = SCC090, pattern = Mito)
+      SCC090[["percent.mt"]] <- PercentageFeatureSet(object = SCC090, pattern = Mito[2])
       if(if_plot){print(VlnPlot(SCC090, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))}
       cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
       tem <- scan(what = "character")
@@ -630,7 +630,7 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
     return(HNSC)}
   else{
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
-    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito)
+    HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito[1])
     cat(" ","Please input the low & high thresholds for nFeature and Mito. If none, input '-Inf' . Such as 200;Inf;-Inf;40 \n",file = stderr())
     HNSC <- subset(HNSC,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
     HNSC <- NormalizeData(HNSC,verbose = F)
