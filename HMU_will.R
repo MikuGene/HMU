@@ -566,7 +566,7 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
       rm(tem)
       gc()
       SCC090 <- CreateSeuratObject(y, name2, min.cells = 3, min.features = 200)
-      SCC090$Group <- name1
+      SCC090$Group <- name2
       SCC090[["percent.mt"]] <- PercentageFeatureSet(object = SCC090, pattern = Mito[2])
       if(if_plot){print(VlnPlot(SCC090, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))}
       cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
@@ -669,4 +669,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-22-17:08. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-22-19:14. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
