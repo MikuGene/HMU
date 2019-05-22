@@ -102,7 +102,8 @@ Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Keg
   dir.create(dir)
   setwd(dir)
   cat(" ","Now working in ",getwd(),"\n",file = stderr())
-  GeneID <- bitr(x,fromType = "SYMBOL",toType = "ENTREZID",OrgDb = "org.Hs.eg.db")
+  GeneT <- gsub("^MT\\.","MT-",x)
+  GeneID <- bitr(GeneT,fromType = "SYMBOL",toType = "ENTREZID",OrgDb = "org.Hs.eg.db")
   ac<-NULL
   bc<-NULL
   PA<-NULL
@@ -668,4 +669,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-21-18:14. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-22-17:08. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
