@@ -588,7 +588,7 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
       gc()
       Anchors <- FindIntegrationAnchors(list(HNSC1, SCC090), dims = 1:20)
       HNSC <- IntegrateData(anchorset = Anchors, dims = 1:20)
-      DefaultAssay(HNSC) <- "Integrated"}
+      DefaultAssay(HNSC) <- "integrated"}
     HNSC <- ScaleData(HNSC, features = rownames(HNSC))
     HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = F)
     if(if_plot){DimHeatmap(HNSC, dims = 1:pmax, cells = 500, balanced = TRUE)}
