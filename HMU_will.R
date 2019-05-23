@@ -518,7 +518,7 @@ CrossCor <- function(x,row = T){
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,nICA = 35){
+scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = T){
   library(Seurat)
   if(ori){HNSC <- Read10X(x)
   cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
@@ -587,8 +587,9 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
       if(!is.null(tem)){cat("well done.\n",file = stderr())}
       rm(tem)
       gc()
-      Anchors <- FindIntegrationAnchors(list(HNSC1, SCC090), dims = 1:20)
-      HNSC <- IntegrateData(anchorset = Anchors, dims = 1:20)
+      if(all_Anc){Anchors <- FindIntegrationAnchors(list(HNSC1, SCC090),anchor.features = intersect(rownames(x),rownames(y)))}
+      else{Anchors <- FindIntegrationAnchors(list(HNSC1, SCC090))}
+      HNSC <- IntegrateData(anchorset = Anchors)
       DefaultAssay(HNSC) <- "integrated"}
     HNSC <- ScaleData(HNSC, features = rownames(HNSC))
     HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = F)
@@ -669,4 +670,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-22-19:14. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-23-17:22. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
