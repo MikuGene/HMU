@@ -1,5 +1,5 @@
 ## 8a03a29901b31176e32928321b1349e6
-cat("Gift for HMU wei group, 2019-4-09. --- Lianhao Song. If any questions, please wechat 18746004617.","\n")
+cat("Gift for HMU wei group, 2019-04-09. --- Lianhao Song. If any questions, please wechat 18746004617.","\n")
 library(plyr)
 library(dplyr)
 library(Matrix)
@@ -364,7 +364,7 @@ Pesuo <- function(x,gene = x@var.genes){
   HNSC_Ps <- orderCells(HNSC_Ps)
   return(HNSC_Ps)}
 ## 8a03a29901b31176e32928321b1349e6
-canFil <- function(x,save = F){
+canFil <- function(x,can = T,save = F){
   if(sum(duplicated(substr(colnames(x),1,12)))>0)
   {x<-x[,colnames(x) %in% sort(colnames(x))[!duplicated(substr(sort(colnames(x)),1,12))]]}
   Can<-x[,which(substr(colnames(x),14,14)=="0")]
@@ -375,9 +375,11 @@ canFil <- function(x,save = F){
     name<-scan(what = "character")
     write.csv(Can,paste(name,"Can.csv",sep = "_"))
     write.csv(Nor,paste(name,"Nor.csv",sep = "_"))}
-  rm(Nor)
   gc()
-  return(Can)}
+  if(!can){rm(Can)
+  return(Nor)}
+  else{rm(Nor)
+  return(Can)}}
 ## 8a03a29901b31176e32928321b1349e6                       
 DESeq2 <- function(countMatrix, pData){
   dds<-DESeqDataSetFromMatrix(countData = countMatrix, colData = pData, design = ~ phenotype)
@@ -670,4 +672,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-23-21:20. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-25-09:10. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
