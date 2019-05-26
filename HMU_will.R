@@ -122,7 +122,7 @@ Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Keg
     if(Gomap){
       library(ggplot2)
       library(stringr)
-      ggplot(data=ac,aes(ac$Count/length(as.character(GeneID[,2])),ac$Description))+geom_point(aes(size=ac$Count,color=-1*log10(ac$qvalue),shape=ac$ONTOLOGY))+scale_colour_gradient(low="blue",high="red")+labs(color=expression(-log[10](Qvalue)),size="Gene number",shape="Ontology",x="GeneRatio",y=NULL,title="GO enrichment")+theme_bw()+theme(plot.title = element_text(hjust = 0.5))+scale_y_discrete(labels = function(x) str_wrap(x,width = 50))
+      print(ggplot(data=ac,aes(ac$Count/length(as.character(GeneID[,2])),ac$Description))+geom_point(aes(size=ac$Count,color=-1*log10(ac$qvalue),shape=ac$ONTOLOGY))+scale_colour_gradient(low="blue",high="red")+labs(color=expression(-log[10](Qvalue)),size="Gene number",shape="Ontology",x="GeneRatio",y=NULL,title="GO enrichment")+theme_bw()+theme(plot.title = element_text(hjust = 0.5))+scale_y_discrete(labels = function(x) str_wrap(x,width = 50)))
       if(save){ggsave(paste(IDname,"tiff",sep = "."),device = "tiff",width = wid,height = h)}}
     gc()}
   if(Kegg){
@@ -628,7 +628,7 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
     dir.create("backup")
-    saveRDS(HNSC,paste0("backup/",name,".rds"))
+    saveRDS(HNSC,paste0("backup/",name,"_backup.rds"))
     gc()
     cat(" ","Please confirm your cluster in other R. \n",file = stderr())
     return(HNSC)}
@@ -672,4 +672,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-25-09:10. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-26-09:06. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
