@@ -520,7 +520,7 @@ CrossCor <- function(x,row = T){
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.5,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F){
+scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F){
   library(Seurat)
   if(ori){HNSC <- Read10X(x)
   cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
@@ -672,4 +672,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-26-09:06. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-26-10:47. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
