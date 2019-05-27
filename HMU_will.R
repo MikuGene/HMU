@@ -133,7 +133,7 @@ Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Keg
     for (i in 1:nrow(bc)) 
     {tryCatch(bc[i,num+1]<-paste(as.character(GeneID[,1])[GeneID[,2] %in% strsplit(bc$geneID,"/")[[i]]],collapse = "/"),error = function(e){write.csv(c("NothingForKEGG"),"ErroKEGG.csv",row.names = F)})}
     rm(num)
-    write.csv(bc,paste(IDname,"KEGG_enrichment.csv",sep = "_"))}
+    write.csv(bc,paste0(IDname,"_KEGG_enrichment.csv"))}
     if(Keggmap){
       library(pathview)
       tryCatch(pathview(gene.data = as.character(GeneID[,2]),pathway.id = bc$ID,species = "hsa"),error = function(e){write.csv(c("NothingForPath"),"ErroPATH.csv",row.names = F)})}}
@@ -145,7 +145,7 @@ Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Keg
     for (i in 1:nrow(PA)) 
     {tryCatch(PA[i,num+1]<-paste(as.character(GeneID[,1])[GeneID[,2] %in% strsplit(PA$geneID,"/")[[i]]],collapse = "/"),error = function(e){write.csv(c("NothingForReactPA"),"ErroREACTPA.csv",row.names = F)})}
     rm(num)
-    write.csv(bc,paste(IDname,"Reactome_enrichment.csv",sep = "_"))}}
+    write.csv(PA,paste0(IDname,"_Reactome_enrichment.csv"))}}
   rm(GeneID)
   aa<-list(ac,bc,PA)
   rm(ac,bc,PA)
@@ -670,4 +670,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-26-10:47. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-27-14:06. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
