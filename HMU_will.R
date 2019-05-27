@@ -681,4 +681,17 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-27-17:02. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+ggpoint <- function(Data,x,y,size = x,clor = y,l_clor = "grey",h_clor = "red",lab_clo = "Pct",lab_siz = "LogFC",Tle = "Markers",sort = "x",Decr = F,Theme = "NULL",Bline = T){
+  if(sort == "x"){Data <- Data[order(Data[,x],decreasing = Decr),]}
+  if(sort == "y"){Data <- Data[order(Data[,y],decreasing = Decr),]}
+  Data[,y] <- factor(Data[,y],levels = unique(Data[,y]))
+  point <- ggplot(Data,aes(Data[,x],Data[,y]))+geom_point(aes(size = Data[,size], color = Data[,color]))+scale_colour_gradient(low=l_clor,high=h_clor)
+  if(Theme == "light"){point <- point + theme_light()}
+  if(Theme == "NULL"){point <- point + theme_minimal()}
+  if(Theme == "frame"){point <- point + theme_bw()}
+  point <- point+labs(color= "Pct",size= "LogFC",x=NULL,y=NULL,title=Tle)+theme(plot.title = element_text(hjust = 0.5))+scale_y_discrete(labels = function(x) str_wrap(x,width = 50))
+  if(!Bline){point <- point + theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank())}
+  print(point)}
+cat(" ","ggplot --- done.","\n",file = stderr())
+## 8a03a29901b31176e32928321b1349e6
+cat(" ","Ready up. Latest update: 2019-05-27-20:43. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
