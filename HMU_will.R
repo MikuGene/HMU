@@ -422,7 +422,18 @@ DErun <- function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = T,name = "temp"){
   gc()
   return(aa)}
 cat(" ","DESeq2 --- done.","\n",file = stderr())
-## 8a03a29901b31176e32928321b1349e6                       
+## 8a03a29901b31176e32928321b1349e6
+ggpie <- function(x,Title = "Cell composition",Size = 3.5,Theme = "light"){
+  Iden <- data.frame(table(x))
+  Iden$Var2 <- factor(c(1:nrow(Iden)))
+  Iden_label <- paste0(as.vector(Iden[,1]), " (", round(Iden$Freq / sum(Iden$Freq) * 100, 2), "%)")
+  pie <- ggplot(Iden, aes(x = "", y = Iden$Freq, fill = Iden$Var2))+geom_bar(stat = "identity")+coord_polar(theta = "y")+labs(x = "", y = "", title = Title)
+  if(Theme == "light"){pie <- pie + theme_light()}
+  if(Theme == "NULL"){pie <- pie + theme_minimal()}
+  if(Theme == "frame"){pie <- pie + theme_bw()}
+  pie <- pie + theme(axis.ticks = element_blank(),axis.text.x = element_blank(),panel.grid.major = element_blank(),panel.grid.minor = element_blank())+scale_fill_discrete(breaks = Iden$Var2,labels = Iden_label)+theme(legend.title = element_blank(),plot.title = element_text(hjust = 0.5))+geom_text(aes(x = 1.5,y = rev(c(0,cumsum(rev(Iden$Freq))[-length(Iden$Freq)])+rev(Iden$Freq/2)),label = as.vector(Iden$Var2)),size = Size)
+  print(pie)}
+## 8a03a29901b31176e32928321b1349e6                 
 Ttest <- function(x,y,Need_T = F,pval = 0.05){
   if(Need_T){
     x <- t(x)
@@ -670,4 +681,4 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-27-14:06. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-27-17:02. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
