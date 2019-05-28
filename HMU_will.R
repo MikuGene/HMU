@@ -4,7 +4,23 @@ library(plyr)
 library(dplyr)
 library(Matrix)
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_2 <- function(path1 = getwd(),path2 = getwd(),mito_name = "^MT\\.",pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7,seed = 233){
+ggGene <- function(exp,Target,Iden,l_clor = "#00FFF0",h_clor = "#F600FF",lab_clo = "Median",lab_siz = "Pct",Tle = "Markers",Theme = "NULL",Bline = T){
+  Gplot <- list()
+  for (i in unique(Iden)){
+    clu <- exp[Target,Iden == i]
+    pct <- apply(clu, 1, function(i) sum(!i == 0))/ncol(clu)
+    Gplot[[as.numeric(i)+1]] <- data.frame(Gene = rownames(clu), Median = apply(clu, 1, median), Mean = apply(clu, 1, mean), Pct = pct, Iden = i)}
+  GP <- do.call(rbind,Gplot)
+  GP$Gene <- factor(GP$Gene,levels = unique(GP$Gene))
+  Gene <- ggplot(GP,aes(Gene,Iden))+geom_point(aes(size = Pct, color = Median))+scale_colour_gradient(low=l_clor,high=h_clor)
+  if(Theme == "light"){Gene <- Gene + theme_light()}
+  if(Theme == "NULL"){Gene <- Gene + theme_minimal()}
+  if(Theme == "frame"){Gene <- Gene + theme_bw()}
+  Gene <- Gene+labs(color= lab_clo,size= lab_siz,x=NULL,y=NULL,title=Tle)+theme(plot.title = element_text(hjust = 0.5))+scale_y_discrete(labels = function(x) str_wrap(x,width = 50))
+  if(!Bline){Gene <- Gene + theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank())}
+  print(Gene)}
+## 8a03a29901b31176e32928321b1349e6
+  scRNA_2 <- function(path1 = getwd(),path2 = getwd(),mito_name = "^MT\\.",pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7,seed = 233){
   library(Seurat)
   cat(" ","Hello!","Now we focus on:",path1,"\n",file = stderr())
   if(detail){
@@ -694,4 +710,4 @@ ggpoint <- function(Data,x,y,size = x,clor = y,l_clor = "grey",h_clor = "red",la
   print(point)}
 cat(" ","ggplot --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-27-20:48. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-05-28-20:33. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
