@@ -6,10 +6,12 @@ library(Matrix)
 ## 8a03a29901b31176e32928321b1349e6
 ggGene <- function(exp,Target,Iden,l_clor = "#00FFF0",h_clor = "#F600FF",lab_clo = "Median",lab_siz = "Pct",Tle = "Markers",Theme = "NULL",Bline = T){
   Gplot <- list()
+  num = 1
   for (i in unique(Iden)){
     clu <- exp[Target,Iden == i]
     pct <- apply(clu, 1, function(i) sum(!i == 0))/ncol(clu)
-    Gplot[[as.numeric(i)+1]] <- data.frame(Gene = rownames(clu), Median = apply(clu, 1, median), Mean = apply(clu, 1, mean), Pct = pct, Iden = i)}
+    Gplot[[num]] <- data.frame(Gene = rownames(clu), Median = apply(clu, 1, median), Mean = apply(clu, 1, mean), Pct = pct, Iden = i)
+    num = num+1}
   GP <- do.call(rbind,Gplot)
   GP$Gene <- factor(GP$Gene,levels = unique(GP$Gene))
   Gene <- ggplot(GP,aes(Gene,Iden))+geom_point(aes(size = Pct, color = Median))+scale_colour_gradient(low=l_clor,high=h_clor)
