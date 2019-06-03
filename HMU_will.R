@@ -549,12 +549,18 @@ cat(" ","Test --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
 scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F){
   library(Seurat)
-  if(ori){HNSC <- Read10X(x)
-  cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())}
   cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
+  if(ori){
+    cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())
+    x <- Read10X(x)
+    if(length(x)>1){
+      write.csv(x[[2]],"Antibody_capture.csv")
+      x <- x[[1]]
+      gc()}}
   if(detail){
     if(!if_two){
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
+    rm(scdata)
     HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito[1])
     if(if_plot){print(VlnPlot(HNSC, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))}
     cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
@@ -712,4 +718,4 @@ ggpoint <- function(Data,x,y,size = x,clor = y,l_clor = "grey",h_clor = "red",la
   print(point)}
 cat(" ","ggplot --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-05-28-20:45. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-06-03-20:19. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
