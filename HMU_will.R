@@ -560,7 +560,6 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
   if(detail){
     if(!if_two){
     HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
-    rm(scdata)
     HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito[1])
     if(if_plot){print(VlnPlot(HNSC, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))}
     cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
