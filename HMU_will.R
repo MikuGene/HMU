@@ -554,7 +554,7 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
     cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())
     x <- Read10X(x)
     if(length(x)>1){
-      write.csv(x[[2]],"Antibody_capture.csv")
+      write.csv(x[[2]],paste0(name,"_Antibody_capture.csv"))
       x <- x[[1]]
       gc()}}
   if(detail){
