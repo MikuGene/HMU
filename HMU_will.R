@@ -547,7 +547,7 @@ CrossCor <- function(x,row = T){
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F,if_var = T,Vars = c("nFeature_RNA","percent.mt")){
+scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F,if_var = F,Vars = c("nFeature_RNA","percent.mt")){
   library(Seurat)
   cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
   if(ori){
@@ -719,4 +719,4 @@ ggpoint <- function(Data,x,y,size = x,clor = y,l_clor = "grey",h_clor = "red",la
   print(point)}
 cat(" ","ggplot --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-06-08-11:02. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-06-08-15:23. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
