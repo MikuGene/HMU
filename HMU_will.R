@@ -547,7 +547,7 @@ CrossCor <- function(x,row = T){
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F){
+scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F,if_var = T,Vars = c("nFeature_RNA","percent.mt")){
   library(Seurat)
   cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
   if(ori){
@@ -625,7 +625,8 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
       else{Anchors <- FindIntegrationAnchors(list(HNSC1, SCC090))}
       HNSC <- IntegrateData(anchorset = Anchors)
       DefaultAssay(HNSC) <- "integrated"}
-    HNSC <- ScaleData(HNSC, features = rownames(HNSC))
+    if(if_var){HNSC <- ScaleData(HNSC, features = rownames(HNSC), vars.to.regress = Vars)}
+    else{HNSC <- ScaleData(HNSC, features = rownames(HNSC))}
     HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = F)
     if(if_plot){DimHeatmap(HNSC, dims = 1:pmax, cells = 500, balanced = TRUE)}
     cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
@@ -671,6 +672,8 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
     HNSC <- subset(HNSC,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
     HNSC <- NormalizeData(HNSC,verbose = F)
     HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 1000*nVar,verbose = F)
+    if(if_var){HNSC <- ScaleData(HNSC, features = rownames(HNSC), vars.to.regress = Vars)}
+    else{HNSC <- ScaleData(HNSC, features = rownames(HNSC))}
     HNSC <- ScaleData(HNSC, features = rownames(HNSC),verbose = F)
     HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = F)
     HNSC <- FindNeighbors(HNSC, dims = 1:PCmax,verbose = F)
@@ -717,4 +720,4 @@ ggpoint <- function(Data,x,y,size = x,clor = y,l_clor = "grey",h_clor = "red",la
   print(point)}
 cat(" ","ggplot --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-06-04-10:10. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-06-08-10:55. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
