@@ -625,8 +625,8 @@ scRNA_3 <- function(x,y = NULL,if_two = F,if_plot = T,name1 = "temp1_sc",name2 =
       else{Anchors <- FindIntegrationAnchors(list(HNSC1, SCC090))}
       HNSC <- IntegrateData(anchorset = Anchors)
       DefaultAssay(HNSC) <- "integrated"}
-    if(if_var){HNSC <- ScaleData(HNSC, features = rownames(HNSC), vars.to.regress = Vars)}
-    else{HNSC <- ScaleData(HNSC, features = rownames(HNSC))}
+    if(if_var){HNSC <- ScaleData(HNSC, features = rownames(HNSC), vars.to.regress = Vars,verbose = F)}
+    else{HNSC <- ScaleData(HNSC, features = rownames(HNSC),verbose = F)}
     HNSC <- RunPCA(HNSC, features = VariableFeatures(HNSC),verbose = F)
     if(if_plot){DimHeatmap(HNSC, dims = 1:pmax, cells = 500, balanced = TRUE)}
     cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
