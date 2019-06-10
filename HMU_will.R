@@ -22,7 +22,7 @@ ggGene <- function(exp,Target,Iden,l_clor = "#00FFF0",h_clor = "#F600FF",lab_clo
   if(!Bline){Gene <- Gene + theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank())}
   print(Gene)}
 ## 8a03a29901b31176e32928321b1349e6
-  scRNA_2 <- function(path1 = getwd(),path2 = getwd(),mito_name = "^MT\\.",pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7,seed = 233){
+scRNA_2 <- function(path1 = getwd(),path2 = getwd(),mito_name = "^MT\\.",pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7,seed = 233){
   library(Seurat)
   cat(" ","Hello!","Now we focus on:",path1,"\n",file = stderr())
   if(detail){
