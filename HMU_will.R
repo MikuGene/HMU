@@ -719,4 +719,15 @@ ggpoint <- function(Data,x,y,size = x,clor = y,l_clor = "grey",h_clor = "red",la
   print(point)}
 cat(" ","ggplot --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-06-08-15:23. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+DEplot<-function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, color = 3,Lima = F,adj = T){
+  if(Lima){
+    if(adj){colnames(x) <- c("log2FoldChange","AveExpr","t","p","padj","B")}
+    else{colnames(x) <- c("log2FoldChange","AveExpr","t","padj","p","B")}}
+  x$Legend<-as.factor(ifelse(x$padj<pvalue & abs(x$log2FoldChange)>=log2FC, ifelse(x$log2FoldChange>log2FC,'Up','Down'),'Not'))
+  print("Please enter your Title name")
+  Title<-scan(what = "character",sep = ",")
+  if(color == 3){colornum <- c("blue", "black", "red")}
+  if(color == 2){colornum <- c("black", "red")}
+  print(ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2))}
+## 8a03a29901b31176e32928321b1349e6
+cat(" ","Ready up. Latest update: 2019-06-13-14:52. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
