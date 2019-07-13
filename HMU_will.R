@@ -1,9 +1,15 @@
 ## 8a03a29901b31176e32928321b1349e6
 cat("Gift for HMU Wei group, 2019-04-09. --- Lianhao Song. If any questions, please wechat 18746004617.","\n")
+if(sum(.packages(all.available=T) %in% "plyr") == 0){install.packages("plyr")}
+if(sum(.packages(all.available=T) %in% "dplyr") == 0){install.packages("dplyr")}
+if(sum(.packages(all.available=T) %in% "Matrix") == 0){install.packages("Matrix")}
+if(sum(.packages(all.available=T) %in% "ggplot2") == 0){install.packages("ggplot2")}
+if(sum(.packages(all.available=T) %in% "Seurat") == 0){install.packages("Seurat")}
 library(plyr)
 library(dplyr)
 library(Matrix)
 library(ggplot2)
+library(Seurat)
 ## 8a03a29901b31176e32928321b1349e6
 ggGene <- function(exp,Target,Iden,l_clor = "#00FFF0",h_clor = "#F600FF",lab_clo = "Median",lab_siz = "Pct",Tle = "Markers",Theme = "NULL",Bline = T){
   Gplot <- list()
@@ -113,6 +119,8 @@ scRNA_2 <- function(path1 = getwd(),path2 = getwd(),mito_name = "^MT\\.",pm = 20
 cat(" ","scRNA_anlysis --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
 Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Kegg = T,Keggmap = T,save = T,Gomap = T,wid = 8, h = 8){
+  if(sum(.packages(all.available=T) %in% "clusterProfiler") == 0){install.packages("clusterProfiler")}
+  if(sum(.packages(all.available=T) %in% "ReactomePA") == 0){install.packages("ReactomePA")}
   library(clusterProfiler)
   library(ReactomePA)
   path <- getwd()
@@ -137,7 +145,7 @@ Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Keg
     gc()
     ac <- na.omit(ac)
     if(Gomap){
-      library(ggplot2)
+      if(sum(.packages(all.available=T) %in% "stringr") == 0){install.packages("stringr")}
       library(stringr)
       print(ggplot(data=ac,aes(ac$Count/length(as.character(GeneID[,2])),ac$Description))+geom_point(aes(size=ac$Count,color=-1*log10(ac$qvalue),shape=ac$ONTOLOGY))+scale_colour_gradient(low="blue",high="red")+labs(color=expression(-log[10](Qvalue)),size="Gene number",shape="Ontology",x="GeneRatio",y=NULL,title="GO enrichment")+theme_bw()+theme(plot.title = element_text(hjust = 0.5))+scale_y_discrete(labels = function(x) str_wrap(x,width = 50)))
       if(save){ggsave(paste(IDname,"tiff",sep = "."),device = "tiff",width = wid,height = h)}}
@@ -154,6 +162,7 @@ Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Keg
     rm(num)
     write.csv(bc,paste0(IDname,"_KEGG_enrichment.csv"))}
     if(Keggmap){
+      if(sum(.packages(all.available=T) %in% "pathview") == 0){install.packages("pathview")}
       library(pathview)
       tryCatch(pathview(gene.data = as.character(GeneID[,2]),pathway.id = bc$ID,species = "hsa"),error = function(e){write.csv(c("NothingForPath"),"ErroPATH.csv",row.names = F)})}}
   if(ReactPA){
@@ -212,6 +221,7 @@ WGCNA_CliCustom<- function(x,y,IDname = "A0_Samples",Need_t = T,save = F,TCGA = 
   return(a)}
 ## 8a03a29901b31176e32928321b1349e6
 WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 30,Map = F,custom = F){
+  if(sum(.packages(all.available=T) %in% "WGCNA") == 0){install.packages("WGCNA")}
   library(WGCNA)
   enableWGCNAThreads(nThreads = nCPU)
   if(!custom){
@@ -292,6 +302,7 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   return(aa)}
 ## 8a03a29901b31176e32928321b1349e6
 WGCNA_CliLink<-function(x,y,xais = T,yais = T,plot = T){
+  if(sum(.packages(all.available=T) %in% "WGCNA") == 0){install.packages("WGCNA")}
   library(WGCNA)
   print("Now please enter one class name. Such as: Grade")
   class <- scan(what = "character")
@@ -373,6 +384,7 @@ WGCNA_Detail <- function(x,y,Cliorder=NULL,plot = T,custom = F,Trait="temp",Colo
 cat(" ","WGNCA --- done.","\n",file = stderr())                       
 ## 8a03a29901b31176e32928321b1349e6
 Pesuo <- function(x,gene = x@var.genes){
+  if(sum(.packages(all.available=T) %in% "monocle") == 0){install.packages("monocle")}
   library(monocle)
   HNSC_Ps <- newCellDataSet(as.matrix(x@data))
   HNSC_Ps <- estimateSizeFactors(HNSC_Ps)
@@ -408,6 +420,7 @@ DESeq2 <- function(countMatrix, pData){
   return(res)}
 ## 8a03a29901b31176e32928321b1349e6
 DErun <- function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = T,name = "temp"){
+  if(sum(.packages(all.available=T) %in% "DESeq2") == 0){install.packages("DESeq2")}
   library(DESeq2)
   if(run){
     positive_ReadCount<-x
@@ -549,7 +562,6 @@ CrossCor <- function(x,row = T){
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
 scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F,if_var = F,Vars = c("nFeature_RNA","percent.mt")){
-  library(Seurat)
   cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
   if(ori){
     cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())
@@ -691,6 +703,7 @@ cat(" ","scRNA_3 --- done.","\n",file = stderr())
 Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   Data <- cbind(x,y)
   Group <- data.frame(row.names = colnames(Data), Group1 = c(rep(1,ncol(x)),rep(0,ncol(y))), Group2 = c(rep(0,ncol(x)),rep(1,ncol(y))))
+  if(sum(.packages(all.available=T) %in% "limma") == 0){install.packages("limma")}
   library(limma)
   Sig <- makeContrasts("Group1-Group2", levels = Group)
   fit <- eBayes(contrasts.fit(lmFit(Data,Group),Sig))
@@ -731,4 +744,4 @@ DEplot<-function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, color
   if(color == 2){colornum <- c("black", "red")}
   print(ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2))}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-07-13-08:40. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-07-13-12:44. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
