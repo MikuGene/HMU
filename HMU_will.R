@@ -721,6 +721,8 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
 ggpoint <- function(Data,x,y,size = x,clor = y,l_clor = "grey",h_clor = "red",lab_clor = "Pct",lab_siz = "LogFC",Tle = "Markers",sort = "x",Decr = F,Theme = "NULL",Bline = T){
+  if(sum(.packages(all.available=T) %in% "stringr") == 0){install.packages("stringr")}
+  library(stringr)
   if(sort == "x"){Data <- Data[order(Data[,x],decreasing = Decr),]}
   if(sort == "y"){Data <- Data[order(Data[,y],decreasing = Decr),]}
   Data[,y] <- factor(Data[,y],levels = unique(Data[,y]))
