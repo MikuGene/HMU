@@ -8,3 +8,6 @@ TCGA analysis:
 scRNA-seq analysis:
 
 Please respect the creator's labor results
+
+The readme for this R package:(the code please contact creator)
+https://pan.baidu.com/s/1EoekExpyJ4A_PYP0Ah7isw
