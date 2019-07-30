@@ -195,7 +195,7 @@ remRow <- function(x,Rem=0.1,raito = T){
   gc()
   return(Frame)}                       
 ## 8a03a29901b31176e32928321b1349e6
-WGCNA_CliCustom<- function(x,y,IDname = "A0_Samples",Need_t = T,save = F,TCGA = F){
+WGCNA_CliCustom <- function(x,y,IDname = "A0_Samples",Need_t = T,save = F,TCGA = F){
   if(Need_t){x <- data.frame(t(x))}
   if(TCGA){
   colnames(y)<-gsub("\\.","-",substr(toupper(colnames(y)),1,12))
@@ -301,7 +301,7 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   gc()
   return(aa)}
 ## 8a03a29901b31176e32928321b1349e6
-WGCNA_CliLink<-function(x,y,xais = T,yais = T,plot = T){
+WGCNA_CliLink <- function(x,y,xais = T,yais = T,plot = T){
   if(sum(.packages(all.available=T) %in% "WGCNA") == 0){install.packages("WGCNA")}
   library(WGCNA)
   print("Now please enter one class name. Such as: Grade")
@@ -423,14 +423,13 @@ DErun <- function(x,y,pvalue = 0.01,log2FC = 2,run = T,save = T,name = "temp"){
   if(sum(.packages(all.available=T) %in% "DESeq2") == 0){install.packages("DESeq2")}
   library(DESeq2)
   if(run){
-    positive_ReadCount<-x
-    negative_ReadCount<-y
-    colnames(negative_ReadCount)<-paste("N",colnames(negative_ReadCount),sep="-")
-    colnames(positive_ReadCount)<-paste("P",colnames(positive_ReadCount),sep="-")
-    ReadCount<-cbind(negative_ReadCount,positive_ReadCount)
-    ReadCount<-round(ReadCount)
-    feature<-c(rep("Neg",ncol(negative_ReadCount)),rep("Pos",ncol(positive_ReadCount)))
-    rm(positive_ReadCount,negative_ReadCount)
+    pos<-x
+    neg<-y
+    colnames(neg)<-paste("N",colnames(neg),sep="-")
+    colnames(pos)<-paste("P",colnames(pos),sep="-")
+    ReadCount<-round(cbind(neg,pos))
+    feature<-c(rep("Neg",ncol(neg)),rep("Pos",ncol(pos)))
+    rm(pos,neg)
     gc()
     pData<-data.frame(phenotype = factor(feature,levels=c("Neg", "Pos")))
     rownames(pData)<-colnames(ReadCount)
@@ -700,7 +699,7 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","scRNA_3 --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
+Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01,save = T,name = "temp"){
   Data <- cbind(x,y)
   Group <- data.frame(row.names = colnames(Data), Group1 = c(rep(1,ncol(x)),rep(0,ncol(y))), Group2 = c(rep(0,ncol(x)),rep(1,ncol(y))))
   if(sum(.packages(all.available=T) %in% "limma") == 0){install.packages("limma")}
@@ -717,6 +716,7 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01){
   output$State <- "None"
   output$State[output$logFC > 0] <- "Up"
   output$State[output$logFC < 0] <- "Down"
+  if(save){write.csv(output,paste(name,"lima.csv",sep = "_"))}
   return(output)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
@@ -746,4 +746,4 @@ DEplot<-function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, color
   if(color == 2){colornum <- c("black", "red")}
   print(ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2))}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-07-13-12:44. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-07-30-14:55. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
