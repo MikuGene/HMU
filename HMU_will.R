@@ -560,7 +560,7 @@ CrossCor <- function(x,row = T){
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F,if_var = F,Vars = c("nFeature_RNA","percent.mt")){
+scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F,if_var = F,Vars = c("nFeature_RNA","percent.mt"),PCjk = T){
   cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
   if(ori){
     cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())
@@ -646,13 +646,14 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
     gc()
+    if(PCjk){
     HNSC <- JackStraw(HNSC, num.replicate = 100)
     HNSC <- ScoreJackStraw(HNSC, dims = 1:(pmax))
     if(if_plot){print(JackStrawPlot(HNSC, dims = 1:pmax, xmax = 0.1, ymax = 0.5))}
     cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
     tem <- scan(what = "character")
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
-    rm(tem)
+    rm(tem)}
     if(if_plot){print(ElbowPlot(HNSC))}
     cat(" ","Please input the highest PC well to use. \n",file = stderr())
     PCmax <- scan()
@@ -735,7 +736,7 @@ ggpoint <- function(Data,x,y,size = x,clor = y,l_clor = "grey",h_clor = "red",la
   print(point)}
 cat(" ","ggplot --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-DEplot<-function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, color = 3,Lima = F,adj = T){
+DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, color = 3,Lima = F,adj = T){
   if(Lima){
     if(adj){colnames(x) <- c("log2FoldChange","AveExpr","t","p","padj","B")}
     else{colnames(x) <- c("log2FoldChange","AveExpr","t","padj","p","B")}}
@@ -746,4 +747,4 @@ DEplot<-function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, color
   if(color == 2){colornum <- c("black", "red")}
   print(ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2))}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-07-30-14:55. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-07-31-9:30. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
