@@ -383,14 +383,14 @@ WGCNA_Detail <- function(x,y,Cliorder=NULL,plot = T,custom = F,Trait="temp",Colo
     return(nodeGenes)}}
 cat(" ","WGNCA --- done.","\n",file = stderr())                       
 ## 8a03a29901b31176e32928321b1349e6
-Pesuo <- function(x,gene = x@var.genes){
+Pesuo <- function(x,gene = x@var.genes,Re = F){
   if(sum(.packages(all.available=T) %in% "monocle") == 0){install.packages("monocle")}
   library(monocle)
   HNSC_Ps <- newCellDataSet(as.matrix(x@data))
   HNSC_Ps <- estimateSizeFactors(HNSC_Ps)
   HNSC_Ps <- setOrderingFilter(HNSC_Ps,gene)
   HNSC_Ps <- reduceDimension(HNSC_Ps, max_components=2)
-  HNSC_Ps <- orderCells(HNSC_Ps)
+  HNSC_Ps <- orderCells(HNSC_Ps, reverse = Re)
   return(HNSC_Ps)}
 ## 8a03a29901b31176e32928321b1349e6
 canFil <- function(x,can = T,save = F){
@@ -747,4 +747,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   if(color == 2){colornum <- c("black", "red")}
   print(ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2))}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-07-31-9:30. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-09-07-10:51. If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
