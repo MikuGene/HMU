@@ -721,7 +721,7 @@ Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01,save = T,Order 
   OP$State <- "None"
   OP$State[OP$LogFC > 0] <- "Up"
   OP$State[OP$LogFC < 0] <- "Down"
-  if(Order){OP <- OP[order(OP$LogFC),]}
+  if(Order){OP <- OP[order(abs(OP$LogFC)),]}
   if(save){write.csv(OP,paste(name,"lima.csv",sep = "_"))}
   return(OP)}
 cat(" ","Lima --- done.","\n",file = stderr())
@@ -761,4 +761,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   if(color == 2){colornum <- c("black", "red")}
   print(ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2))}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-10-11-10:38 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-10-11-11:06 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
