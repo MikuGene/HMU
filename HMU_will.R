@@ -700,25 +700,30 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","scRNA_3 --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
-Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01,save = T,name = "temp"){
+Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01,save = T,Order = T,name = "temp"){
   Data <- cbind(x,y)
   Group <- data.frame(row.names = colnames(Data), Group1 = c(rep(1,ncol(x)),rep(0,ncol(y))), Group2 = c(rep(0,ncol(x)),rep(1,ncol(y))))
   if(sum(.packages(all.available=T) %in% "limma") == 0){install.packages("limma")}
   library(limma)
   Sig <- makeContrasts("Group1-Group2", levels = Group)
   fit <- eBayes(contrasts.fit(lmFit(Data,Group),Sig))
-  output <- na.omit(topTable(fit,number = nrow(Data),coef = 1,adjust = "BH"))
+  OP <- na.omit(topTable(fit,number = nrow(Data),coef = 1,adjust = "BH"))
   rm(Data,Group,Sig,fit)
   gc()
-  if(filt)
-  {output <- subset(output, adj.P.Val <= padj & abs(logFC) >= log2FC & P.Value <= pval)}
-  output$Sig <- "NO"
-  output$Sig[output$P.Value < 0.05] <- "Yes"
-  output$State <- "None"
-  output$State[output$logFC > 0] <- "Up"
-  output$State[output$logFC < 0] <- "Down"
-  if(save){write.csv(output,paste(name,"lima.csv",sep = "_"))}
-  return(output)}
+  colnames(OP) <- c("LogFC","AveExpr","T","P_val","P_adj","B")
+  OP$MeanP <- apply(x,1,mean)
+  OP$MeanN <- apply(y,1,mean)
+  OP$MedianP <- apply(x,1,median)
+  OP$MedianN <- apply(y,1,median)
+  if(filt){OP <- subset(OP, P_adj <= padj & abs(LogFC) >= log2FC & P_val <= pval)}
+  OP$Sig <- "NO"
+  OP$Sig[OP$P_val < 0.05] <- "Yes"
+  OP$State <- "None"
+  OP$State[OP$LogFC > 0] <- "Up"
+  OP$State[OP$LogFC < 0] <- "Down"
+  if(Order){OP <- OP[order(OP$LogFC),]}
+  if(save){write.csv(OP,paste(name,"lima.csv",sep = "_"))}
+  return(OP)}
 cat(" ","Lima --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
 ggpoint <- function(Data,x,y,size = x,clor = y,l_clor = "grey",h_clor = "red",lab_clor = "Pct",lab_siz = "LogFC",Tle = "Markers",sort = "x",Decr = F,Theme = "NULL",Bline = T){
@@ -756,4 +761,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   if(color == 2){colornum <- c("black", "red")}
   print(ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2))}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-09-29-21:05 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-10-11-10:38 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
