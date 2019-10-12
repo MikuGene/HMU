@@ -752,7 +752,7 @@ gene_line <- function(x,dig = 2){
 x <- round(x,digits = dig)
 DTB <- data.frame(table(x))
 colnames(DTB) <- c("Val","Freq")
-DTB$Val <- as.numeric（as.character(DTB$Val))
+DTB$Val <- as.numeric(as.character(DTB$Val))
 DTB$Freq <- as.numeric(DTB$Freq)
 plot(DTB$Val,DTB$Freq)+lines(DTB$Val,predict(loess(DTB$Freq ~ as.numeric(DTB$Val))))}
 ## 8a03a29901b31176e32928321b1349e6
