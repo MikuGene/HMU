@@ -765,14 +765,14 @@ Exct <- function(x,exct = "\\^",filed = 1){
   print(paste0("After: ",x[1]))
   return(x)}
 ## 8a03a29901b31176e32928321b1349e6
-gene_line <- function(x,dig = 2){
-x <- round(x,digits = dig)
-DTB <- data.frame(table(x))
-colnames(DTB) <- c("Val","Freq")
-DTB$Val <- as.numeric(as.character(DTB$Val))
-DTB$Freq <- as.numeric(DTB$Freq)
-PT <- plot(DTB$Val,DTB$Freq)+lines(DTB$Val,predict(loess(DTB$Freq ~ as.numeric(DTB$Val))))
-return(PT)}
+ge_lin <- function(x,dig = 2){
+  x <- round(x,digits = dig)
+  DTB <- data.frame(table(x))
+  colnames(DTB) <- c("Val","Freq")
+  DTB$Val <- as.numeric(as.character(DTB$Val))
+  DTB$Freq <- as.numeric(DTB$Freq)
+  PT <- ggplot(DTB,aes(DTB$Val,DTB$Freq))+geom_point(size = 1.3)+geom_smooth(method = loess)+xlab("Coefficients")+ylab("Frequency")+theme_bw()
+  return(PT)}
 ## 8a03a29901b31176e32928321b1349e6
 DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, color = 3,Lima = F,adj = T){
   if(Lima){
@@ -785,4 +785,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   if(color == 2){colornum <- c("black", "red")}
   print(ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2))}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-10-17-09:22 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-10-17-09:56 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
