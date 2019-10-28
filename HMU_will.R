@@ -765,6 +765,12 @@ Exct <- function(x,exct = "\\^",filed = 1){
   print(paste0("After: ",x[1]))
   return(x)}
 ## 8a03a29901b31176e32928321b1349e6
+Rname <- function(a,row = 1,tag = "_d") {
+while (sum(duplicated(a[,row])) > 0) {a[,row] <- ifelse(duplicated(a[,row]),paste0(a[,row],tag),a[,row])}
+rownames(a) <- a[,row]
+a <- a[,-row]
+return(a)}
+## 8a03a29901b31176e32928321b1349e6
 ge_lin <- function(x,dig = 2){
   x <- round(as.numeric(x),digits = dig)
   DTB <- data.frame(table(x))
@@ -786,4 +792,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   DEp <- ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2)
   return(DEp)}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-10-27-16:08 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-10-28-09:23 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
