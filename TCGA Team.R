@@ -8,7 +8,7 @@ setwd("F:/TCGA/")
 
 RNA <- read.table("HTSeq - FPKM-UQ.merge.txt", header = T, row.names = 1,sep = "\t")
 
-source("LionSong.R")
+source("https://raw.githubusercontent.com/Citruswalker/HMU/master/HMU_will.R")
 
 ## First step Rem row 30% ##
 RNA <- remRow(RNA,Rem = 0.3)
@@ -179,5 +179,5 @@ write.csv(cys,"Cys_red.csv")
 Gene <- read.table("Red/Red_nodes_red_Cys.txt",header = T,sep = "\t")
 rm(list = ls()[!ls() == "Gene"])
 Gene <- gsub(".*_","",WG_red[[2]])
-source("LionSong.R")
+source("https://raw.githubusercontent.com/Citruswalker/HMU/master/HMU_will.R")
 En_gene <- Enrich(Gene,dir = "Red-ge")
