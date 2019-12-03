@@ -29,95 +29,6 @@ ggGene <- function(exp,Target,Iden,l_clor = "#00FFF0",h_clor = "#F600FF",lab_clo
   if(!Bline){Gene <- Gene + theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank())}
   print(Gene)}
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_2 <- function(path1 = getwd(),path2 = getwd(),mito_name = "^MT\\.",pm = 20,Data_name = "temp",Reso = 0.6,detail = T,nGene_R = c(200,Inf),mito_R = c(-Inf,0.4),PC_M = 7,seed = 233){
-  library(Seurat)
-  cat(" ","Hello!","Now we focus on:",path1,"\n",file = stderr())
-  if(detail){
-    PBMC <- Read10X(path1)
-    PBMC <- CreateSeuratObject(raw.data = PBMC,min.cells = 3,min.genes = 200,project = "PBMC")
-    mito_genes <- grep(mito_name,x = rownames(PBMC@data),value = T)
-    precent_mito <- colSums(PBMC@raw.data[mito_genes,])/colSums(PBMC@raw.data)
-    PBMC <- AddMetaData(object = PBMC, metadata = precent_mito, col.name = "percent_mito")
-    par(mfrow = c(1, 2))
-    GenePlot(object = PBMC, gene1 = "nUMI", gene2 = "percent_mito", cex.use = 0.2)
-    GenePlot(object = PBMC, gene1 = "nUMI", gene2 = "nGene", cex.use = 0.2)
-    cat(" ","Now let us cut: \n",file = stderr())
-    cat(" ","Please input the low & high thresholds for nGene. If none, input '-Inf' . \n",file = stderr())
-    nGene_thre <- scan(sep = ";")
-    cat(" ","Please input the low & high thresholds for mito. If none, input '-Inf' . \n",file = stderr())
-    mito_thre <- scan(sep = ";")
-    dev.off()
-    PBMC <- FilterCells(object = PBMC, subset.names = c("nGene", "percent_mito"), low.thresholds = c(nGene_thre[1], mito_thre[1]), high.thresholds = c(nGene_thre[2], mito_thre[2]))
-    print(summary(PBMC@raw.data[,1]))
-    PBMC <- NormalizeData(object = PBMC, normalization.method = "LogNormalize",scale.factor = 10000)
-    print(summary(PBMC@data[,1]))
-    PBMC <- FindVariableGenes(object = PBMC, mean.function = ExpMean, dispersion.function = LogVMR, x.low.cutoff = 0.0125, x.high.cutoff = 3, y.cutoff = 0.5)
-    gc()
-    gc()
-    PBMC <- ScaleData(object = PBMC, vars.to.regress = c("nUMI", "percent_mito"))
-    print(summary(PBMC@scale.data[,1]))
-    gc()
-    PBMC <- RunPCA(object = PBMC, pc.genes = PBMC@var.genes, do.print = F)
-    PBMC <- JackStraw(object = PBMC, num.replicate = 100)
-    gc()
-    cat(" ","Are you ready ? If ok, input 1",file = stderr())
-    tem <- scan(what = "character")
-    if(!is.null(tem)){cat("well done.\n",file = stderr())}
-    rm(tem)
-    JackStrawPlot(object = PBMC, PCs = 1:pm)
-    cat(" ","Please save your figure. If ok, input 1",file = stderr())
-    tem <- scan(what = "character")
-    if(!is.null(tem)){cat("well done.\n",file = stderr())}
-    rm(tem)
-    print(PCElbowPlot(PBMC))
-    cat(" ","Please save your figure. If ok, input 1",file = stderr())
-    tem <- scan(what = "character")
-    if(!is.null(tem)){cat("well done.\n",file = stderr())}
-    rm(tem)
-    PCHeatmap(object = PBMC, pc.use = 1:pm, cells.use = 500, do.balanced = TRUE, label.columns = FALSE)
-    cat(" ","Please input the highest PC well to use.",file = stderr())
-    PCmax <- scan()
-    dev.off()
-    PBMC <- FindClusters(object = PBMC, reduction.type = "pca", dims.use = 1:PCmax, resolution = Reso, print.output = 0, save.SNN = TRUE)
-    gc()
-    gc()
-    PBMC <- RunTSNE(object = PBMC, dims.use = 1:PCmax)
-    TSNEPlot(object = PBMC,do.label = T)
-    cat(" ","Please save your figure. If ok, input 1",file = stderr())
-    tem <- scan(what = "character")
-    if(!is.null(tem)){cat("well done.\n",file = stderr())}
-    rm(tem)
-    cat(" ","Please confirm your cluster in other R. \n",file = stderr())
-    rm(mito_genes,precent_mito,nGene_thre,mito_thre,PCmax)
-    gc()
-    save(PBMC,file = paste0(path2,Data_name,"_backup.rData"))
-    return(PBMC)}
-  else{
-    PBMC <- Read10X(path1)
-    PBMC <- CreateSeuratObject(raw.data = PBMC,min.cells = 3,min.genes = 200,project = "PBMC")
-    mito_genes <- grep(mito_name,x = rownames(PBMC@data),value = T)
-    precent_mito <- colSums(PBMC@raw.data[mito_genes,])/colSums(PBMC@raw.data)
-    PBMC <- AddMetaData(object = PBMC, metadata = precent_mito, col.name = "percent_mito")
-    PBMC <- FilterCells(object = PBMC, subset.names = c("nGene", "percent_mito"), low.thresholds = c(nGene_R[1], mito_R[1]), high.thresholds = c(nGene_R[2], mito_R[2]))
-    print(summary(PBMC@raw.data[,1]))
-    PBMC <- NormalizeData(object = PBMC, normalization.method = "LogNormalize",scale.factor = 10000)
-    print(summary(PBMC@data[,1]))
-    PBMC <- FindVariableGenes(object = PBMC, mean.function = ExpMean, dispersion.function = LogVMR, x.low.cutoff = 0.0125, x.high.cutoff = 3, y.cutoff = 0.5)
-    gc()
-    PBMC <- ScaleData(object = PBMC, vars.to.regress = c("nUMI", "percent_mito"))
-    gc()
-    print(summary(PBMC@scale.data[,1]))
-    PBMC <- RunPCA(object = PBMC, pc.genes = PBMC@var.genes, do.print = F, pcs.print = 1:5, genes.print = 5)
-    PBMC <- FindClusters(object = PBMC, reduction.type = "pca", dims.use = 1:PC_M, resolution = Reso, print.output = 0, save.SNN = TRUE)
-    gc()
-    PBMC <- RunTSNE(object = PBMC, dims.use = 1:PC_M, seed.use = seed)
-    Plot_F <- TSNEPlot(object = PBMC,do.label = T)
-    HNSC <- list(PBMC,Plot_F)
-    rm(mito_genes,precent_mito,nGene_R,mito_R,PC_M,PBMC,Plot_F)
-    gc()
-    return(HNSC)}}
-cat(" ","scRNA_anlysis --- done.","\n",file = stderr())
-## 8a03a29901b31176e32928321b1349e6
 Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Kegg = T,Keggmap = T,save = T,Gomap = T,wid = 8, h = 8){
   if(sum(.packages(all.available=T) %in% "clusterProfiler") == 0){install.packages("clusterProfiler")}
   if(sum(.packages(all.available=T) %in% "ReactomePA") == 0){install.packages("ReactomePA")}
@@ -278,7 +189,6 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
   geneTree<-net$dendrograms[[1]]
   MEs<-orderMEs(moduleEigengenes(FPKM, moduleColors)$eigengenes)
   rm(net)
-  gc()
   gc()
   tomP <- NULL
   if(Map){
@@ -577,7 +487,7 @@ CrossCor <- function(x,row = T){
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","Test --- done.","\n",file = stderr()) 
 ## 8a03a29901b31176e32928321b1349e6
-scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F,if_var = F,Vars = c("nFeature_RNA","percent.mt"),PCjk = T){
+scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc",name2 = "temp2_sc",ori = F,Mito = c("^MT\\.","^MT-"),pmax = 20,PCmax = NULL,Reso = 0.6,name = "temp",Dim = 2,detail = T,UMap = F,nVar = 2.5,all_Anc = F,if_var = F,Vars = c("nFeature_RNA","percent.mt"),PCjk = T,save = T,Normal = T){
   cat(" ","Hello!","Now we locate at:",getwd(),"\n",file = stderr())
   if(ori){
     cat(" ","Hello!","Now we focus on:",x,"\n",file = stderr())
@@ -588,7 +498,7 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
       gc()}}
   if(detail){
     if(!if_two){
-    HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
+    HNSC <- CreateSeuratObject(x, name, min.cells = 0, min.features = 0)
     HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito[1])
     if(if_plot){print(VlnPlot(HNSC, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))}
     cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
@@ -601,11 +511,11 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
     cat(" ","Please input the low & high thresholds for nFeature and Mito. If none, input '-Inf' . Such as 200;Inf;-Inf;40 \n",file = stderr())
     HNSC <- subset(HNSC,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
     if(if_plot){print(CombinePlots(list(FeatureScatter(HNSC,"nCount_RNA","percent.mt"),FeatureScatter(HNSC,"nCount_RNA","nFeature_RNA"))))}
-    HNSC <- NormalizeData(HNSC)
+    if(Normal){HNSC <- NormalizeData(HNSC)}
     HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 1000*nVar)
     if(if_plot){print(LabelPoints(VariableFeaturePlot(HNSC), points = head(VariableFeatures(HNSC), 10), repel = T))}}
     else{
-      HNSC1 <- CreateSeuratObject(x, name1, min.cells = 3, min.features = 200)
+      HNSC1 <- CreateSeuratObject(x, name1, min.cells = 0, min.features = 0)
       HNSC1$Group <- name1
       HNSC1[["percent.mt"]] <- PercentageFeatureSet(object = HNSC1, pattern = Mito[1])
       if(if_plot){print(VlnPlot(HNSC1, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))}
@@ -619,7 +529,7 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
       cat(" ","Please input the low & high thresholds for nFeature and Mito. If none, input '-Inf' . Such as 200;Inf;-Inf;40 \n",file = stderr())
       HNSC1 <- subset(HNSC1,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
       if(if_plot){print(CombinePlots(list(FeatureScatter(HNSC1,"nCount_RNA","percent.mt"),FeatureScatter(HNSC1,"nCount_RNA","nFeature_RNA"))))}
-      HNSC1 <- NormalizeData(HNSC1)
+      if(Normal){HNSC1 <- NormalizeData(HNSC1)}
       HNSC1 <- FindVariableFeatures(HNSC1, selection.method = "vst", nfeatures = 1000*nVar)
       if(if_plot){print(LabelPoints(VariableFeaturePlot(HNSC1), points = head(VariableFeatures(HNSC1), 10), repel = T))}
       cat(" ","Now First one done. \n",file = stderr())
@@ -628,7 +538,7 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
       if(!is.null(tem)){cat("well done.\n",file = stderr())}
       rm(tem)
       gc()
-      SCC090 <- CreateSeuratObject(y, name2, min.cells = 3, min.features = 200)
+      SCC090 <- CreateSeuratObject(y, name2, min.cells = 0, min.features = 0)
       SCC090$Group <- name2
       SCC090[["percent.mt"]] <- PercentageFeatureSet(object = SCC090, pattern = Mito[2])
       if(if_plot){print(VlnPlot(SCC090, c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3,pt.size = 0.2))}
@@ -642,7 +552,7 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
       cat(" ","Please input the low & high thresholds for nFeature and Mito. If none, input '-Inf' . Such as 200;Inf;-Inf;40 \n",file = stderr())
       SCC090 <- subset(SCC090,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
       if(if_plot){print(CombinePlots(list(FeatureScatter(SCC090,"nCount_RNA","percent.mt"),FeatureScatter(SCC090,"nCount_RNA","nFeature_RNA"))))}
-      SCC090 <- NormalizeData(SCC090)
+      if(Normal){SCC090 <- NormalizeData(SCC090)}
       SCC090 <- FindVariableFeatures(SCC090, selection.method = "vst", nfeatures = 1000*nVar)
       if(if_plot){print(LabelPoints(VariableFeaturePlot(SCC090), points = head(VariableFeatures(SCC090), 10), repel = T))}
       cat(" ","Please save your figure. If ok, input 1 \n",file = stderr())
@@ -650,7 +560,7 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
       if(!is.null(tem)){cat("well done.\n",file = stderr())}
       rm(tem)
       gc()
-      if(all_Anc){Anchors <- FindIntegrationAnchors(list(HNSC1, SCC090),anchor.features = intersect(rownames(x),rownames(y)))}
+      if(all_Anc){Anchors <- FindIntegrationAnchors(list(HNSC1, SCC090),anchor.features = length(intersect(rownames(x),rownames(y))))}
       else{Anchors <- FindIntegrationAnchors(list(HNSC1, SCC090))}
       HNSC <- IntegrateData(anchorset = Anchors)
       DefaultAssay(HNSC) <- "integrated"}
@@ -690,17 +600,18 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
     tem <- scan(what = "character")
     if(!is.null(tem)){cat("well done.\n",file = stderr())}
     rm(tem)
+    if(save){
     dir.create("backup")
-    saveRDS(HNSC,paste0("backup/",name,"_backup.rds"))
+    saveRDS(HNSC,paste0("backup/",name,"_backup.rds"))}
     gc()
     cat(" ","Please confirm your cluster in other R. \n",file = stderr())
     return(HNSC)}
   else{
-    HNSC <- CreateSeuratObject(x, name, min.cells = 3, min.features = 200)
+    HNSC <- CreateSeuratObject(x, name, min.cells = 0, min.features = 0)
     HNSC[["percent.mt"]] <- PercentageFeatureSet(object = HNSC, pattern = Mito[1])
     cat(" ","Please input the low & high thresholds for nFeature and Mito. If none, input '-Inf' . Such as 200;Inf;-Inf;40 \n",file = stderr())
     HNSC <- subset(HNSC,nFeature_RNA >= scan() & nFeature_RNA <= scan() & percent.mt >= scan() & percent.mt <= scan())
-    HNSC <- NormalizeData(HNSC,verbose = F)
+    if(Normal){HNSC <- NormalizeData(HNSC,verbose = F)}
     HNSC <- FindVariableFeatures(HNSC, selection.method = "vst", nfeatures = 1000*nVar,verbose = F)
     if(if_var){HNSC <- ScaleData(HNSC, features = rownames(HNSC), vars.to.regress = Vars,verbose = F)}
     else{HNSC <- ScaleData(HNSC, features = rownames(HNSC),verbose = F)}
@@ -812,4 +723,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   DEp <- ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2)
   return(DEp)}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-10-31-10:54 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-12-03-19:12 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
