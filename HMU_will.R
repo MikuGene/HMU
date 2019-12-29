@@ -40,42 +40,39 @@ Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Keg
   cat(" ","Now working in ",getwd(),"\n",file = stderr())
   GeneT <- gsub("^MT\\.","MT-",x)
   GeneID <- bitr(GeneT,fromType = "SYMBOL",toType = "ENTREZID",OrgDb = "org.Hs.eg.db")
-  ac<-NULL
+  GoRE<-NULL
   bc<-NULL
   PA<-NULL
   if(save){write.csv(GeneID,paste(IDname,"GeneID.csv",sep = "_"))}
   gc()
   if(Go){
-    ab <- enrichGO(gene =as.character(GeneID[,2]),OrgDb="org.Hs.eg.db",ont = "ALL",pAdjustMethod = "BH",minGSSize = 1,pvalueCutoff = Cut,readable = TRUE)
-    aa <- data.frame(ab)
-    rm(ab)
-    gc()
-    if(save){write.csv(aa,paste(IDname,"GO_enrichment.csv",sep = "_"))}
-    ac <- aa[c(which(aa$ONTOLOGY=="BP")[1:10], which(aa$ONTOLOGY=="CC")[1:10], which(aa$ONTOLOGY=="MF")[1:10]),]
-    rm(aa)
-    gc()
-    ac <- na.omit(ac)
+    GoRE <- enrichGO(gene =as.character(GeneID[,2]),OrgDb="org.Hs.eg.db",ont = "ALL",pAdjustMethod = "BH",minGSSize = 1,pvalueCutoff = Cut,readable = TRUE)
+    GoRE <- data.frame(GoRE)
+    if(save){write.csv(GoRE,paste(IDname,"GO_enrichment.csv",sep = "_"))}
+    GoRE <- na.omit(GoRE[c(which(GoRE$ONTOLOGY=="BP")[1:10], which(GoRE$ONTOLOGY=="CC")[1:10], which(GoRE$ONTOLOGY=="MF")[1:10]),])
+    GoRE <- GoRE[order(GoRE$Count),]
     if(Gomap){
       if(sum(.packages(all.available=T) %in% "stringr") == 0){install.packages("stringr")}
       library(stringr)
-      print(ggplot(data=ac,aes(ac$Count/length(as.character(GeneID[,2])),ac$Description))+geom_point(aes(size=ac$Count,color=-1*log10(ac$qvalue),shape=ac$ONTOLOGY))+scale_colour_gradient(low="blue",high="red")+labs(color=expression(-log[10](Qvalue)),size="Gene number",shape="Ontology",x="GeneRatio",y=NULL,title="GO enrichment")+theme_bw()+theme(plot.title = element_text(hjust = 0.5))+scale_y_discrete(labels = function(x) str_wrap(x,width = 50)))
+      print(ggplot(GoRE,aes(GoRE$Count/length(as.character(GeneID[,2])),factor(GoRE$Description,levels = GoRE$Description)))+
+              geom_point(aes(size=GoRE$Count,color=-1*log10(GoRE$qvalue),shape=GoRE$ONTOLOGY))+
+              scale_colour_gradient(low="blue",high="red")+labs(color=expression(-log[10](Qvalue)),size="Gene number",shape="Ontology",x="GeneRatio",y=NULL,title="GO enrichment")+
+              theme_bw()+theme(plot.title = element_text(hjust = 0.5))+scale_y_discrete(labels = function(x) str_wrap(x,width = 50)))
       if(save){ggsave(paste(IDname,"tiff",sep = "."),device = "tiff",width = wid,height = h)}}
     gc()}
   if(Kegg){
-    bb <- enrichKEGG(gene = as.character(GeneID[,2]),organism = "hsa",pvalueCutoff = Cut)
-    bc <- data.frame(bb)
-    rm(bb)
+    KeRE <- enrichKEGG(gene = as.character(GeneID[,2]),organism = "hsa",pvalueCutoff = Cut)
+    KeRE <- data.frame(KeRE)
     gc()
-    if(save)
-    {num <- ncol(bc)
-    for (i in 1:nrow(bc)) 
-    {tryCatch(bc[i,num+1]<-paste(as.character(GeneID[,1])[GeneID[,2] %in% strsplit(bc$geneID,"/")[[i]]],collapse = "/"),error = function(e){write.csv(c("NothingForKEGG"),"ErroKEGG.csv",row.names = F)})}
-    rm(num)
-    write.csv(bc,paste0(IDname,"_KEGG_enrichment.csv"))}
+    if(save){
+      num <- ncol(KeRE)
+      for (i in 1:nrow(KeRE)){tryCatch(KeRE[i,num+1]<-paste(as.character(GeneID[,1])[GeneID[,2] %in% strsplit(KeRE$geneID,"/")[[i]]],collapse = "/"),error = function(e){write.csv(c("NothingForKEGG"),"ErroKEGG.csv",row.names = F)})}
+      rm(num)
+      write.csv(KeRE,paste0(IDname,"_KEGG_enrichment.csv"))}
     if(Keggmap){
       if(sum(.packages(all.available=T) %in% "pathview") == 0){install.packages("pathview")}
       library(pathview)
-      tryCatch(pathview(gene.data = as.character(GeneID[,2]),pathway.id = bc$ID,species = "hsa"),error = function(e){write.csv(c("NothingForPath"),"ErroPATH.csv",row.names = F)})}}
+      tryCatch(pathview(gene.data = as.character(GeneID[,2]),pathway.id = KeRE$ID,species = "hsa"),error = function(e){write.csv(c("NothingForPath"),"ErroPATH.csv",row.names = F)})}}
   if(ReactPA){
     PA <- matrix(1:2)
     tryCatch(PA <- enrichPathway(gene = as.character(GeneID[,2]),pvalueCutoff = Cut,organism = "human")@result,error = function(e){print("No Reactome")})
@@ -86,12 +83,12 @@ Enrich <- function(x,dir = "temp",IDname = dir,Cut = 0.01,Go = T,ReactPA = T,Keg
     rm(num)
     write.csv(PA,paste0(IDname,"_Reactome_enrichment.csv"))}}
   rm(GeneID)
-  aa<-list(ac,bc,PA)
-  rm(ac,bc,PA)
+  EnrichRE<-list(GoRE,KeRE,PA)
+  rm(GoRE,KeRE,PA,bods,gene.idtype.bods,gene.idtype.list,cpd.simtypes,korg)
   gc()
   gc()
   setwd(path)
-  return(aa)}
+  return(EnrichRE)}
 cat(" ","Enrich --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
 remRow <- function(x,Rem=0.1,raito = T){
@@ -723,4 +720,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   DEp <- ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2)
   return(DEp)}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-12-03-19:12 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-12-29-16:45 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
