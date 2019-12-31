@@ -625,6 +625,28 @@ scRNA_3 <- function(x,y = NULL,Anti = F,if_two = F,if_plot = T,name1 = "temp1_sc
 ## 8a03a29901b31176e32928321b1349e6
 cat(" ","scRNA_3 --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
+LR_iden <- function(x,LR,rem = 0.7,verbose = F){
+  colnames(LR) <- c("Ligand","Receptor")
+  Lall <- intersect(unique(LR$Ligand),rownames(LSCC_Sr))
+  LR_RE <- data.frame(Ligand = NA, Receptor = NA, L_Cell = NA, R_Cell = NA)
+  if(verbose){Turn <- 1}
+  for (i in unique(x@active.ident)) {
+    if(verbose){print(paste0(Turn," Now use Ligand: ",i))}
+    Mat <- as.matrix(x@assays$RNA@data[Lall,x@active.ident == i])
+    Li <- rownames(Mat)[apply(Mat,1,function(i) sum(i==0)) <= rem*dim(Mat)[2] & median(i[i != 0]) >= 1]
+    Ri <- intersect(LR$Receptor[LR$Ligand %in% Li],rownames(x))
+    for (j in unique(x@active.ident)) {
+      if(verbose){print(paste0(" ",Turn, " Now in Receptor: ",j))}
+      Mat_R <- as.matrix(x@assays$RNA@data[Ri,x@active.ident == j])
+      Li_Ri <- rownames(Mat_R)[apply(Mat_R,1,function(i) sum(i==0)) <= rem*dim(Mat_R)[2] & median(i[i != 0]) >= 1]
+      Li_Li <- LR[LR$Ligand %in% Li & LR$Receptor %in% Li_Ri,]
+      Li_Li$L_Cell <- i
+      Li_Li$R_Cell <- j
+      LR_RE <- rbind(LR_RE,Li_Li)
+      if(verbose){Turn <- Turn + 1}}
+    gc()}
+  return(LR_RE)}
+## 8a03a29901b31176e32928321b1349e6
 Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01,save = T,Order = T,name = "temp"){
   Data <- cbind(x,y)
   Group <- data.frame(row.names = colnames(Data), Group1 = c(rep(1,ncol(x)),rep(0,ncol(y))), Group2 = c(rep(0,ncol(x)),rep(1,ncol(y))))
@@ -720,4 +742,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   DEp <- ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2)
   return(DEp)}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-12-29-16:46 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2019-12-31-19:57 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
