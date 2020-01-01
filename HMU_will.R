@@ -645,7 +645,7 @@ LR_iden <- function(x,LR,rem = 0.7,verbose = F){
       LR_RE <- rbind(LR_RE,Li_Li)
       if(verbose){Turn <- Turn + 1}}
     gc()}
-  return(LR_RE)}
+  return(na.omit(LR_RE))}
 ## 8a03a29901b31176e32928321b1349e6
 Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01,save = T,Order = T,name = "temp"){
   Data <- cbind(x,y)
@@ -742,4 +742,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   DEp <- ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2)
   return(DEp)}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2019-12-31-19:57 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2020-01-01-09:47 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
