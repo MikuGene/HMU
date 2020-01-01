@@ -128,63 +128,62 @@ WGCNA_CliCustom <- function(x,y,IDname = "A0_Samples",Need_t = T,save = F,TCGA =
   gc()
   return(a)}
 ## 8a03a29901b31176e32928321b1349e6
-WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 30,Map = F,custom = F){
+WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 30,Map = F,custom = F,fast_power = NULL){
   if(sum(.packages(all.available=T) %in% "WGCNA") == 0){install.packages("WGCNA")}
   library(WGCNA)
   enableWGCNAThreads(nThreads = nCPU)
   if(!custom){
-    if(is.numeric(nGene))
-    {FPKM<-t(x[[2]][order(apply(x[[2]],1,mad),decreasing = T)[1:(nGene*1000)],])}
-    if(!is.numeric(nGene))
-    {FPKM<-t(x[[2]][apply(x[[2]],1,mad)>0,])}}
-  if(custom){FPKM <- t(x)}
-  gsg<-goodSamplesGenes(FPKM, verbose = 3)
-  FPKM<-FPKM[gsg$goodSamples, gsg$goodGenes]
+    if(is.numeric(nGene)){FPKM <- t(x[[2]][order(apply(x[[2]],1,mad),decreasing = T)[1:(nGene*1000)],])}
+    else{FPKM <- t(x[[2]][apply(x[[2]],1,mad) > 0,])}}
+  else{FPKM <- t(x)}
+  gsg <- goodSamplesGenes(FPKM, verbose = 3)
+  FPKM <- FPKM[gsg$goodSamples, gsg$goodGenes]
   rm(gsg)
   gc()
   if(Cutsample){
-    sampleTree<-hclust(dist(FPKM), method = "average")
+    sampleTree <- hclust(dist(FPKM), method = "average")
     par(cex = 0.6)
     par(mar = c(0,4,2,0))
     plot(sampleTree,main = "Sample clustering to detect outliers",sub="",xlab="",cex.lab = 1.5,cex.axis = 1.5,cex.main = 2)
     print("Welcome to Hatsune world. Now let`s cut the samples")
-    okline<-scan()
+    okline <- scan()
     abline(h = okline, col = "red")
     print("Can it appropriate? If ok, please input yes")
-    ok<-scan(what = "character")
+    ok <- scan(what = "character")
     while(!ok=="yes")
     {print("Please try again")
-      okline<-scan()
+      okline <- scan()
       abline(h = okline, col = "red")
       print("Can it appropriate? If ok, please input yes")
-      ok<-scan(what = "character")}
-    clust<-cutreeStatic(sampleTree, cutHeight = okline, minSize = 10)
+      ok <- scan(what = "character")}
+    clust <- cutreeStatic(sampleTree, cutHeight = okline, minSize = 10)
     keepSamples<-(clust==1)
     FPKM<-FPKM[keepSamples,]
     print(table(clust))
     rm(sampleTree,okline,ok,clust,keepSamples)
     gc()}
-  powers<-c(c(1:10), seq(from = 12, to=20, by=2))
-  sft<-pickSoftThreshold(FPKM, powerVector = powers, verbose = 5,blockSize = mGene*1000)
-  par(mfrow = c(1,2))
-  plot(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],xlab="Soft Threshold (power)",ylab="Scale Free Topology Model Fit,signed R^2",type="n",main = paste("Scale independence"))
-  text(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],labels=powers,cex=0.9,col="red")
-  abline(h=0.90,col="red")
-  plot(sft$fitIndices[,1], sft$fitIndices[,5],xlab="Soft Threshold (power)",ylab="Mean Connectivity", type="n",main = paste("Mean connectivity"))
-  text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=0.9,col="red")
-  okpower<-sft$powerEstimate
-  print(paste("The power result is",okpower,". Need to modify ? If need, please input yes"))
-  judg<-scan(what = "character")
-  if(judg=="yes"){
-    print("Please input your okpower")
-    okpower<-scan()
-    print(paste("Now the power result is",okpower))}
-  rm(sft,powers,judg)
-  gc()
-  net<-blockwiseModules(FPKM, power = okpower,TOMType = "unsigned", minModuleSize = minMD, reassignThreshold = 0,mergeCutHeight = 0.25,numericLabels = TRUE, pamRespectsDendro = FALSE,verbose = 3,maxBlockSize=mGene*1000*4/3)
-  moduleColors<-labels2colors(net$colors)
-  geneTree<-net$dendrograms[[1]]
-  MEs<-orderMEs(moduleEigengenes(FPKM, moduleColors)$eigengenes)
+  if(!is.null(fast_power)){okpower <- fast_power}else{
+    powers <- c(c(1:10), seq(from = 12, to=20, by=2))
+    sft <- pickSoftThreshold(FPKM, powerVector = powers, verbose = 5,blockSize = mGene*1000)
+    par(mfrow = c(1,2))
+    plot(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],xlab="Soft Threshold (power)",ylab="Scale Free Topology Model Fit,signed R^2",type="n",main = paste("Scale independence"))
+    text(sft$fitIndices[,1], -sign(sft$fitIndices[,3])*sft$fitIndices[,2],labels=powers,cex=0.9,col="red")
+    abline(h=0.90,col="red")
+    plot(sft$fitIndices[,1], sft$fitIndices[,5],xlab="Soft Threshold (power)",ylab="Mean Connectivity", type="n",main = paste("Mean connectivity"))
+    text(sft$fitIndices[,1], sft$fitIndices[,5], labels=powers, cex=0.9,col="red")
+    okpower <- sft$powerEstimate
+    print(paste("The power result is",okpower,". Need to modify ? If need, please input yes"))
+    judg <- scan(what = "character")
+    if(judg == "yes"){
+      print("Please input your okpower")
+      okpower <- scan()
+      print(paste("Now the power result is",okpower))}
+    rm(sft,powers,judg)
+    gc()}
+  net <- blockwiseModules(FPKM, power = okpower,TOMType = "unsigned", minModuleSize = minMD, reassignThreshold = 0,mergeCutHeight = 0.25,numericLabels = TRUE, pamRespectsDendro = FALSE,verbose = 3,maxBlockSize=mGene*1000*4/3)
+  moduleColors <- labels2colors(net$colors)
+  geneTree <- net$dendrograms[[1]]
+  MEs <- orderMEs(moduleEigengenes(FPKM, moduleColors)$eigengenes)
   rm(net)
   gc()
   tomP <- NULL
@@ -199,14 +198,14 @@ WGCNA_TOMmap <- function(x,nCPU = 5,Cutsample = T,nGene = 10,mGene = 12,minMD = 
     rm(plotTOM)}
   gc()
   print("Now we can check some interesting target")
-  Targetgene<-scan(what = "character",sep = ",")
+  Targetgene <- scan(what = "character",sep = ",")
   print(colnames(FPKM)[which(colnames(FPKM) %in% Targetgene)])
   print(moduleColors[which(colnames(FPKM) %in% Targetgene)])
   write.csv(data.frame(Gene = Targetgene, Color = moduleColors[which(colnames(FPKM) %in% Targetgene)]),paste(Targetgene[1],"colorFrame.csv",sep = "_"),row.names = F)
-  aa<-list(MEs,moduleColors,okpower,FPKM,tomP)
+  RE <- list(MEs,moduleColors,okpower,FPKM,tomP)
   rm(MEs,moduleColors,okpower,FPKM,tomP,geneTree)
   gc()
-  return(aa)}
+  return(RE)}
 ## 8a03a29901b31176e32928321b1349e6
 WGCNA_CliLink <- function(x,y,xais = T,yais = T,plot = T){
   if(sum(.packages(all.available=T) %in% "WGCNA") == 0){install.packages("WGCNA")}
@@ -745,4 +744,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   DEp <- ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2)
   return(DEp)}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2020-01-01-09:47 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2020-01-01-17:13 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
