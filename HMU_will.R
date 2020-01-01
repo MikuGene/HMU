@@ -627,9 +627,10 @@ cat(" ","scRNA_3 --- done.","\n",file = stderr())
 ## 8a03a29901b31176e32928321b1349e6
 LR_iden <- function(x,LR,rem = 0.7,verbose = F){
   colnames(LR) <- c("Ligand","Receptor")
-  Lall <- intersect(unique(LR$Ligand),rownames(LSCC_Sr))
+  Lall <- intersect(unique(LR$Ligand),rownames(x))
+  LR_Num <- data.frame(L_Cell = NA, R_Cell = NA, Num = NA)
   LR_RE <- data.frame(Ligand = NA, Receptor = NA, L_Cell = NA, R_Cell = NA)
-  if(verbose){Turn <- 1}
+  Turn <- 1
   for (i in unique(x@active.ident)) {
     if(verbose){print(paste0(Turn," Now use Ligand: ",i))}
     Mat <- as.matrix(x@assays$RNA@data[Lall,x@active.ident == i])
@@ -643,9 +644,11 @@ LR_iden <- function(x,LR,rem = 0.7,verbose = F){
       Li_Li$L_Cell <- i
       Li_Li$R_Cell <- j
       LR_RE <- rbind(LR_RE,Li_Li)
-      if(verbose){Turn <- Turn + 1}}
+      LR_Num[Turn,] <- c(i,j,nrow(Li_Li))
+      Turn <- Turn + 1}
     gc()}
-  return(na.omit(LR_RE))}
+  LR_ok <- list(LR_Num, na.omit(LR_RE))
+  return(LR_ok)}
 ## 8a03a29901b31176e32928321b1349e6
 Lima <- function(x,y,filt = F,log2FC = 2,padj = 0.01,pval = 0.01,save = T,Order = T,name = "temp"){
   Data <- cbind(x,y)
