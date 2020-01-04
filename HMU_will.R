@@ -11,6 +11,54 @@ library(Matrix)
 library(ggplot2)
 library(Seurat)
 ## 8a03a29901b31176e32928321b1349e6
+CY_iden <- function(x,Pairs,Iden,name = "temp",save = T){
+  CY <- scran::cyclone(x@assays$RNA@data,Pairs)
+  CY <- data.frame(t(rbind(CY$phases,rbind(t(CY$scores),t(CY$normalized.scores)))))
+  colnames(CY) <- c("Phase","G1","S","G2M","G1_N","S_N","G2M_N")
+  CY$G1L  <- ifelse(CY$G1 > 0.5 & CY$G2M < 0.5,1,0)
+  CY$SL   <- ifelse(CY$G1 < 0.5 & CY$G2M < 0.5,1,0)
+  CY$G2ML <- ifelse(CY$G1 < 0.5 & CY$G2M > 0.5,1,0)
+  if(save){
+    dir.create("CY")
+    write.csv(CY,paste0("CY/",name,"_CY.csv"))}
+  CY_order <- list()
+  CY_num <- matrix(NA,nrow = length(Iden),ncol = 5)
+  colnames(CY_num) <- c("Cell Type","G1","S","G2","Unk")
+  CY_G1 <- data.frame()
+  CY_S <- data.frame()
+  CY_G2M <- data.frame()
+  CY_0 <- data.frame()
+  for (i in 1:length(Iden)) {
+    CY_num[i,1] <- Iden[i]
+    CY_I <- CY[x@active.ident %in% Iden[i],]
+    if(sum(CY_I$G1L == 1) > 0){
+      CY_G1 <- CY_I[CY_I$G1L == 1,]
+      CY_G1 <- sort(CY_G1$G1,decreasing = T)
+      CY_num[i,2] <- length(CY_G1)
+      CY_G1 <- data.frame(G1 = CY_G1, S = 0, G2M = 0)}
+    if(sum(CY_I$SL == 1) > 0){
+      CY_S <- CY_I[CY_I$SL == 1,]
+      CY_S <- sort(CY_S$S,decreasing = T)
+      CY_num[i,3] <- length(CY_S)
+      CY_S <- data.frame(G1 = 0, S = CY_S, G2M = 0)}
+    if(sum(CY_I$G2ML == 1) > 0){
+      CY_G2M <- CY_I[CY_I$G2ML == 1,]
+      CY_G2M <- sort(CY_G2M$G2M,decreasing = T)
+      CY_num[i,4] <- length(CY_G2M)
+      CY_G2M <- data.frame(G1 = 0, S = 0, G2M = CY_G2M)}
+    if(sum(rowSums(CY_I[,8:10]) == 0) > 0){
+      CY_0 <- CY_I[rowSums(CY_I[,8:10]) == 0,8:10]
+      CY_num[i,5] <- nrow(CY_0)
+      colnames(CY_0) <- colnames(CY_I)[2:4]}
+    CY_order[[i]] <- rbind(CY_G1,CY_S,CY_G2M,CY_0)}
+  rm(CY_G1,CY_S,CY_G2M,CY_0)
+  gc()
+  CY_order <- do.call(rbind,CY_order)
+  if(save){
+    write.csv(CY_num,paste0("CY/",name,"_CYN.csv"))
+    write.csv(CY_order,paste0("CY/",name,"_CYO.csv"))}
+  return(list(CY,CY_num,CY_order))}
+## 8a03a29901b31176e32928321b1349e6
 ggGene <- function(exp,Target,Iden,l_clor = "#00FFF0",h_clor = "#F600FF",lab_clo = "Median",lab_siz = "Pct",Tle = "Markers",Theme = "NULL",Bline = T){
   Gplot <- list()
   num = 1
@@ -744,4 +792,4 @@ DEplot <- function(x, pvalue = 0.01, log2FC = 2, plimit = 30, log2limit = 5, col
   DEp <- ggplot(data=x,aes(x=log2FoldChange, y=-log10(padj),colour=Legend))+ggtitle(Title)+xlab("log2 Foldchange")+ylab("-log10 Padj")+geom_vline(xintercept=c(-log2FC,log2FC),lty=6,col="grey",lwd=0.5)+geom_hline(yintercept = -log10(pvalue),lty=4,col="grey",lwd=0.5)+scale_color_manual(values = colornum)+theme(legend.position="right")+theme_bw()+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),legend.title = element_blank())+xlim(-log2limit,log2limit) + ylim(0,plimit)+theme(plot.title = element_text(hjust = 0.5))+geom_point(alpha=0.4, size=1.2)
   return(DEp)}
 ## 8a03a29901b31176e32928321b1349e6
-cat(" ","Ready up. Latest update: 2020-01-01-17:13 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
+cat(" ","Ready up. Latest update: 2020-01-04-17:46 --- Lianhao Song.","\n","","---If any questions, please wechat 18746004617. Email: songlianhao233@gmail.com","\n",file = stderr())
