@@ -436,12 +436,17 @@ Ttest <- function(x,y,Need_T = F,pval = 0.05){
 ## 8a03a29901b31176e32928321b1349e6
 CorTest <- function(x,y,method = "all",p_cut = 0.01,adj = T,row = T,Order = T,slien = T){
   if(is.null(rownames(x))){
-    if(is.null(ncol(x))){x <- matrix(x,nrow = 1)}
-    rownames(x) <- c(1:nrow(x))}
+    if(ncol(data.frame(x)) < 1){x <- matrix(x,nrow = 1)}
+    rownames(x) <- c(1:nrow(x))
+    }
   if(is.null(rownames(y))){
-    if(is.null(ncol(y))){y <- matrix(y,nrow = 1)}
-    rownames(y) <- c(1:nrow(y))}
-  if(!row){y <- t(y)}
+    if(ncol(data.frame(y)) < 1){y <- matrix(y,nrow = 1)}
+    rownames(y) <- c(1:nrow(y))
+    }
+  if(!row){
+    x <- t(x)
+    y <- t(y)
+    }
   if(method == "all"){
     method <- "pearson"
     method2 <- "spearman"
@@ -450,28 +455,30 @@ CorTest <- function(x,y,method = "all",p_cut = 0.01,adj = T,row = T,Order = T,sl
     for (j in 1:nrow(x)) {
       for(i in 1:nrow(y)){
         e <- e + 1
-        cor <- cor.test(as.numeric(x),as.numeric(y[i,]), method = method, alternative="two.sided")
+        cor <- cor.test(as.numeric(x[j,]),as.numeric(y[i,]), method = method, alternative="two.sided")
         p_value <- cor$p.value
         pearson_value <- as.numeric(cor[4])
         Corlist[e,1] <- rownames(x)[j]
         Corlist[e,2] <- rownames(y)[i]
         Corlist[e,3] <- pearson_value
         Corlist[e,4] <- p_value
-        cor <- cor.test(as.numeric(x),as.numeric(y[i,]), method = method2, alternative="two.sided")
+        cor <- cor.test(as.numeric(x[j,]),as.numeric(y[i,]), method = method2, alternative="two.sided")
         p_value <- cor$p.value
         pearson_value <- as.numeric(cor[4])
         Corlist[e,6] <- pearson_value
         Corlist[e,7] <- p_value
-        if(!slien){cat("Now in :",e,"\n")}}
-      if(!slien){cat("Now complete :",j,"\n")}}
+        if(!slien){cat("Now in :",e,"\n")}
+        }
+      if(!slien){cat("Now complete :",j,"\n")}
+      }
     Corlist[,5] <- p.adjust(Corlist[,4],method="BH")
     Corlist[,8] <- p.adjust(Corlist[,7],method="BH")
     Corlist <- data.frame(Corlist)
     colnames(Corlist) <- c("Mainname","Corname","Cor","P_value","P_adj","Cor_s","P_value_s","P_adj_s")
     if(Order){Corlist <- Corlist[order(Corlist$P_adj),]}
     Corlist$Sig <- "No"
-    if(adj){Corlist$Sig[as.numeric(Corlist$P_adj) < p_cut] <- "Yes"}
-    else{Corlist$Sig[as.numeric(Corlist$P_value) < p_cut] <- "Yes"}
+    if(adj){Corlist$Sig[as.numeric(Corlist$P_adj) < p_cut] <- "Yes"}else{
+      Corlist$Sig[as.numeric(Corlist$P_value) < p_cut] <- "Yes"}
     Corlist$State <- "None"
     Corlist$State[as.numeric(Corlist$Cor) > 0] <- "pos"
     Corlist$State[as.numeric(Corlist$Cor) < 0] <- "neg"
@@ -482,7 +489,7 @@ CorTest <- function(x,y,method = "all",p_cut = 0.01,adj = T,row = T,Order = T,sl
     for (j in 1:nrow(x)) {
       for(i in 1:nrow(y)){
         e <- e + 1
-        cor <- cor.test(as.numeric(x),as.numeric(y[i,]), method = method, alternative="two.sided")
+        cor <- cor.test(as.numeric(x[j,]),as.numeric(y[i,]), method = method, alternative="two.sided")
         p_value <- cor$p.value
         pearson_value <- as.numeric(cor[4])
         Corlist[e,1] <- rownames(x)[j]
